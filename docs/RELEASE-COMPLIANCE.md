@@ -1,7 +1,7 @@
 # Release-Compliance-Record
 
-Produkt: IPAC XInput Bridge<br>
-Version: 0.1.0 (Entwicklungsfassung)<br>
+Produkt: XInput KeyBridge<br>
+Version: 0.2.0 (Entwicklungsfassung)<br>
 Letzte Prüfung: 12. August 2026<br>
 Geplante Plattform: direkte Distribution für Windows 10/11
 

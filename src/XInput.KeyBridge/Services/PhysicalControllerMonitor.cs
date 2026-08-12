@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public interface IPhysicalControllerCounter
 {

@@ -1,11 +1,12 @@
 using Microsoft.Win32;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public static class AutostartService
 {
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "IPAC XInput Bridge";
+    private const string ValueName = "XInput KeyBridge";
+    private const string LegacyValueName = "IPAC XInput Bridge";
 
     public static bool IsEnabled()
     {
@@ -21,10 +22,12 @@ public static class AutostartService
             string executable = Environment.ProcessPath
                 ?? throw new InvalidOperationException("Programmpfad konnte nicht ermittelt werden.");
             key.SetValue(ValueName, $"\"{executable}\" --tray --start", RegistryValueKind.String);
+            key.DeleteValue(LegacyValueName, throwOnMissingValue: false);
         }
         else
         {
             key.DeleteValue(ValueName, throwOnMissingValue: false);
+            key.DeleteValue(LegacyValueName, throwOnMissingValue: false);
         }
     }
 }

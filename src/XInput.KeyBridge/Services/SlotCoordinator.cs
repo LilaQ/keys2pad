@@ -1,6 +1,6 @@
-using IPAC.XInputBridge.Models;
+using XInput.KeyBridge.Models;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public sealed record BridgeStatus(bool Enabled, int PhysicalControllers, int VirtualControllers, string Profile, string? Error = null);
 

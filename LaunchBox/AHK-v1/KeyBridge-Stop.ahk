@@ -2,10 +2,10 @@
 #SingleInstance Force
 SetWorkingDir %A_ScriptDir%
 
-BridgeExe := A_ScriptDir . "\IPAC.XInputBridge.exe"
+BridgeExe := A_ScriptDir . "\XInput.KeyBridge.exe"
 IfNotExist, %BridgeExe%
 {
-    PackageExe := A_ScriptDir . "\..\..\IPAC.XInputBridge.exe"
+    PackageExe := A_ScriptDir . "\..\..\XInput.KeyBridge.exe"
     IfExist, %PackageExe%
         BridgeExe := PackageExe
 }

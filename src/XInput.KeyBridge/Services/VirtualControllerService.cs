@@ -1,9 +1,9 @@
-using IPAC.XInputBridge.Models;
+using XInput.KeyBridge.Models;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public sealed class VirtualControllerService : IDisposable
 {
@@ -80,6 +80,7 @@ public sealed class VirtualControllerService : IDisposable
         Set(controller, Xbox360Button.RightShoulder, Pressed(VirtualInput.RightShoulder));
         Set(controller, Xbox360Button.Back, Pressed(VirtualInput.Back));
         Set(controller, Xbox360Button.Start, Pressed(VirtualInput.Start));
+        Set(controller, Xbox360Button.Guide, Pressed(VirtualInput.Guide));
         Set(controller, Xbox360Button.LeftThumb, Pressed(VirtualInput.LeftThumb));
         Set(controller, Xbox360Button.RightThumb, Pressed(VirtualInput.RightThumb));
         controller.SubmitReport();

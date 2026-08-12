@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using IPAC.XInputBridge.Models;
-using IPAC.XInputBridge.Services;
+using XInput.KeyBridge.Models;
+using XInput.KeyBridge.Services;
 
-namespace IPAC.XInputBridge.UI;
+namespace XInput.KeyBridge.UI;
 
 public sealed class MainForm : Form
 {
@@ -28,6 +28,7 @@ public sealed class MainForm : Form
         (VirtualInput.RightTrigger, "RT"),
         (VirtualInput.Back, "Back / View"),
         (VirtualInput.Start, "Start / Menu"),
+        (VirtualInput.Guide, "Xbox / Guide"),
         (VirtualInput.LeftThumb, "Linken Stick drücken"),
         (VirtualInput.RightThumb, "Rechten Stick drücken")
     ];
@@ -56,7 +57,7 @@ public sealed class MainForm : Form
         _store = store;
         _coordinator = coordinator;
 
-        Text = "IPAC XInput Bridge";
+        Text = "XInput KeyBridge";
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(780, 620);
         Size = new Size(900, 760);
@@ -75,7 +76,7 @@ public sealed class MainForm : Form
         _trayIcon = new NotifyIcon
         {
             Icon = SystemIcons.Application,
-            Text = "IPAC XInput Bridge",
+            Text = "XInput KeyBridge",
             ContextMenuStrip = trayMenu,
             Visible = true
         };
@@ -122,7 +123,7 @@ public sealed class MainForm : Form
         help.DropDownItems.Add("Rechtliches & Compliance", null, (_, _) => new LegalForm().ShowDialog(this));
         help.DropDownItems.Add("Über", null, (_, _) => MessageBox.Show(
             this,
-            $"IPAC XInput Bridge\nVersion {Application.ProductVersion}\n\nKeyboard zu XInput für Windows 10/11.",
+            $"XInput KeyBridge\nVersion {Application.ProductVersion}\n\nKeyboard zu XInput für Windows 10/11.",
             "Über", MessageBoxButtons.OK, MessageBoxIcon.Information));
 
         menu.Items.Add(file);
@@ -187,7 +188,6 @@ public sealed class MainForm : Form
         _autostart.CheckedChanged += (_, _) => SetAutostart();
         _minimizeToTray.Text = "Schließen/Minimieren ins Tray";
         _minimizeToTray.AutoSize = true;
-        _minimizeToTray.CheckedChanged += (_, _) => { _config.MinimizeToTray = _minimizeToTray.Checked; Save(); };
         _pollInterval.Minimum = 4;
         _pollInterval.Maximum = 50;
         _pollInterval.Width = 55;
@@ -229,21 +229,43 @@ public sealed class MainForm : Form
             table.Controls.Add(enabled, 0, 0);
             table.SetColumnSpan(enabled, 2);
 
-            int row = 1;
+            Label instructions = new()
+            {
+                Text = "Linksklick: Taste neu zuweisen · Rechtsklick: Zuordnung löschen",
+                AutoSize = true,
+                ForeColor = SystemColors.GrayText,
+                Margin = new Padding(3, 3, 3, 10)
+            };
+            table.Controls.Add(instructions, 0, 1);
+            table.SetColumnSpan(instructions, 2);
+
+            int row = 2;
             foreach ((VirtualInput input, string label) in Inputs)
             {
                 table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 table.Controls.Add(new Label { Text = label, AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(3, 8, 3, 3) }, 0, row);
                 Button button = new() { Dock = DockStyle.Top, Height = 28, Tag = input, Text = KeyName(player, input) };
                 button.Click += (_, _) => BeginCapture(capturedPlayer, input, button);
+                button.MouseUp += (_, e) =>
+                {
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        ClearBinding(capturedPlayer, input, button);
+                    }
+                };
                 _mappingButtons[(capturedPlayer, input)] = button;
                 table.Controls.Add(button, 1, row++);
             }
 
-            Button reset = new() { Text = "P-Spieler zurücksetzen", AutoSize = true, Margin = new Padding(3, 12, 3, 6) };
+            FlowLayoutPanel actions = new() { AutoSize = true, Margin = new Padding(0, 9, 0, 6) };
+            Button clear = new() { Text = "Alle Belegungen löschen", AutoSize = true };
+            clear.Click += (_, _) => ClearPlayer(capturedPlayer);
+            Button reset = new() { Text = "Standard wiederherstellen", AutoSize = true };
             reset.Click += (_, _) => ResetPlayer(capturedPlayer);
-            table.Controls.Add(reset, 0, row);
-            table.SetColumnSpan(reset, 2);
+            actions.Controls.Add(clear);
+            actions.Controls.Add(reset);
+            table.Controls.Add(actions, 0, row);
+            table.SetColumnSpan(actions, 2);
             page.Controls.Add(table);
             _playerTabs.TabPages.Add(page);
         }
@@ -264,7 +286,7 @@ public sealed class MainForm : Form
         }
 
         _capture = (player, input, button);
-        button.Text = "Taste drücken …  (Entf = löschen)";
+        button.Text = "Beliebige Taste drücken …";
         button.Focus();
     }
 
@@ -276,14 +298,7 @@ public sealed class MainForm : Form
         }
 
         PlayerConfig player = _config.CurrentProfile.Players[capture.Player];
-        if (e.KeyCode is Keys.Delete or Keys.Back or Keys.Escape)
-        {
-            player.Bindings.Remove(capture.Input);
-        }
-        else
-        {
-            player.Bindings[capture.Input] = (int)e.KeyCode;
-        }
+        player.Bindings[capture.Input] = (int)e.KeyCode;
 
         capture.Button.Text = KeyName(player, capture.Input);
         _capture = null;
@@ -294,6 +309,28 @@ public sealed class MainForm : Form
 
     private static string KeyName(PlayerConfig player, VirtualInput input) =>
         player.Bindings.TryGetValue(input, out int key) ? ((Keys)key).ToString() : "— nicht belegt —";
+
+    private void ClearBinding(int playerIndex, VirtualInput input, Button button)
+    {
+        if (_capture is { } capture && capture.Player == playerIndex && capture.Input == input)
+        {
+            _capture = null;
+        }
+
+        PlayerConfig player = _config.CurrentProfile.Players[playerIndex];
+        player.Bindings.Remove(input);
+        button.Text = KeyName(player, input);
+        Save();
+    }
+
+    private void ClearPlayer(int playerIndex)
+    {
+        if (MessageBox.Show(this, $"Wirklich alle Belegungen für P{playerIndex + 1} löschen?", "Belegungen löschen",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+        _config.CurrentProfile.Players[playerIndex].Bindings.Clear();
+        Save();
+        BuildPlayerTabs();
+    }
 
     private void LoadSettings()
     {
@@ -425,8 +462,8 @@ public sealed class MainForm : Form
             : "Keine virtuellen Controller verbunden";
         _toggleButton.Text = status.Enabled ? "Bridge stoppen" : "Bridge starten";
         _trayIcon.Text = status.Enabled
-            ? $"IPAC XInput: {status.PhysicalControllers} echt, {status.VirtualControllers} virtuell"
-            : "IPAC XInput Bridge: gestoppt";
+            ? $"XInput KeyBridge: {status.PhysicalControllers} echt, {status.VirtualControllers} virtuell"
+            : "XInput KeyBridge: gestoppt";
     }
 
     public Task<string> ExecuteCommandAsync(string command)

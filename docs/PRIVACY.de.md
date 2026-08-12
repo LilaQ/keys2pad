@@ -1,16 +1,16 @@
-# Datenschutzhinweis – IPAC XInput Bridge
+# Datenschutzhinweis – XInput KeyBridge
 
-Stand: 12. August 2026 · Entwicklungsfassung 0.1.0
+Stand: 12. August 2026 · Entwicklungsfassung 0.2.0
 
 ## Verarbeitung
 
-IPAC XInput Bridge arbeitet lokal auf dem Windows-PC. Die App verarbeitet:
+XInput KeyBridge arbeitet lokal auf dem Windows-PC. Die App verarbeitet:
 
 - den momentanen gedrückt/nicht-gedrückt-Zustand der vom Benutzer konfigurierten Tastaturtasten;
 - Windows-Geräteinformationen, die zur Zählung echter XInput-Controller und zum Ausschluss eigener ViGEm-Geräte nötig sind;
 - vom Benutzer gewählte Profile, Tastenbelegungen und App-Einstellungen.
 
-Konfigurationen werden im Benutzerprofil unter `%LOCALAPPDATA%\IPAC XInput Bridge\config.json` gespeichert. Die App enthält keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung, Analyse-SDKs oder eigene Netzwerkkommunikation. Daten werden nicht von der App an Dritte übertragen.
+Konfigurationen werden im Benutzerprofil unter `%LOCALAPPDATA%\XInput KeyBridge\config.json` gespeichert. Die App enthält keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung, Analyse-SDKs oder eigene Netzwerkkommunikation. Daten werden nicht von der App an Dritte übertragen.
 
 ## Berechtigungen und Löschung
 

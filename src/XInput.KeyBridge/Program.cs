@@ -1,13 +1,13 @@
 using System.Diagnostics;
-using IPAC.XInputBridge.Models;
-using IPAC.XInputBridge.Services;
-using IPAC.XInputBridge.UI;
+using XInput.KeyBridge.Models;
+using XInput.KeyBridge.Services;
+using XInput.KeyBridge.UI;
 
-namespace IPAC.XInputBridge;
+namespace XInput.KeyBridge;
 
 internal static class Program
 {
-    private const string MutexName = "Local\\IPAC.XInputBridge.SingleInstance.v1";
+    private const string MutexName = "Local\\XInput.KeyBridge.SingleInstance.v1";
 
     [STAThread]
     private static void Main(string[] args)
@@ -24,7 +24,7 @@ internal static class Program
 
             if (command is "stop" or "exit" or "hide" or "status")
             {
-                WriteConsole("IPAC XInput Bridge läuft nicht.");
+                WriteConsole("XInput KeyBridge läuft nicht.");
                 Environment.ExitCode = 2;
                 return;
             }
@@ -37,7 +37,7 @@ internal static class Program
                 return;
             }
 
-            WriteConsole("IPAC XInput Bridge konnte nicht gestartet werden.");
+            WriteConsole("XInput KeyBridge konnte nicht gestartet werden.");
             Environment.ExitCode = 4;
             return;
         }
@@ -45,7 +45,7 @@ internal static class Program
         using Mutex mutex = new(initiallyOwned: true, MutexName, out bool firstInstance);
         if (!firstInstance)
         {
-            WriteConsole("IPAC XInput Bridge läuft bereits.");
+            WriteConsole("XInput KeyBridge läuft bereits.");
             return;
         }
 
@@ -129,7 +129,7 @@ internal static class Program
 
     private static void ShowHelp()
     {
-        string executable = Path.GetFileName(Environment.ProcessPath) ?? "IPAC.XInputBridge.exe";
+        string executable = Path.GetFileName(Environment.ProcessPath) ?? "XInput.KeyBridge.exe";
         WriteConsole($"""
             {executable} [Option]
 

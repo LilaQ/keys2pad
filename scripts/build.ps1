@@ -6,8 +6,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$project = Join-Path $root "src/IPAC.XInputBridge/IPAC.XInputBridge.csproj"
-$output = Join-Path $root "artifacts/IPAC-XInput-Bridge-$Runtime"
+$project = Join-Path $root "src/XInput.KeyBridge/XInput.KeyBridge.csproj"
+$output = Join-Path $root "artifacts/XInput-KeyBridge-$Runtime"
 
 dotnet restore $project -r $Runtime
 dotnet publish $project -c $Configuration -r $Runtime --self-contained true `

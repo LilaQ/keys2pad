@@ -1,6 +1,6 @@
-# IPAC XInput Bridge
+# XInput KeyBridge
 
-Eine native Windows-App, die Keyboard-Eingaben (z. B. von einem Ultimarc I-PAC) auf bis zu vier virtuelle Xbox-360-Controller abbildet. Echte XInput-Controller erhalten automatisch Vorrang.
+Eine native Windows-App, die beliebige Keyboard-Eingaben auf bis zu vier virtuelle Xbox-360-Controller abbildet. Sie funktioniert mit normalen Tastaturen, Arcade-Encodern, Button-Boxen und Geräten wie dem Ultimarc I-PAC. Echte XInput-Controller erhalten automatisch Vorrang.
 
 ## Verhalten der Controller-Slots
 
@@ -16,12 +16,12 @@ Windows weist XInput-Indizes selbst zu und stellt keine API zum direkten Setzen 
 
 ## Funktionen
 
-- vier unabhängig konfigurierbare P1–P4-Mappings
+- vier unabhängig konfigurierbare P1–P4-Mappings; jede emulierbare Controller-Aktion kann auf jede Windows-Taste gelegt werden
 - Profile erstellen, duplizieren, löschen und per CLI wählen
-- digitale Keyboard-Eingaben für beide Sticks, D-Pad, ABXY, Schultertasten, Trigger, Start/Back und Stick-Klicks
+- digitale Keyboard-Eingaben für beide Sticks, D-Pad, ABXY, Schultertasten, Trigger, Start/Back, Guide/Xbox und Stick-Klicks
 - automatische Erkennung echter Xbox/XInput-Pads, ViGEm-Geräte werden im Windows-Gerätebaum ausgeschlossen
 - Tray-Icon, Minimieren ins Tray und optionaler Autostart pro Windows-Benutzer
-- lokale JSON-Konfiguration unter `%LOCALAPPDATA%\IPAC XInput Bridge\config.json`
+- lokale JSON-Konfiguration unter `%LOCALAPPDATA%\XInput KeyBridge\config.json`
 - AutoHotkey-v1- und -v2-Skripte für LaunchBox
 - keine Konten, Telemetrie, Werbung oder Netzwerkkommunikation der App
 
@@ -37,24 +37,24 @@ ViGEmBus wurde 2023 eingestellt und erhält keine Updates mehr. Die App installi
 
 1. ViGEmBus aus dem offiziellen Release installieren (Administratorrechte werden nur hierfür benötigt).
 2. Den Release-ZIP der Bridge entpacken.
-3. `IPAC.XInputBridge.exe` starten.
-4. In P1–P4 die jeweilige Aktion anklicken und anschließend die gewünschte IPAC-Taste drücken. `Entf`, `Backspace` oder `Esc` löscht eine Belegung.
+3. `XInput.KeyBridge.exe` starten.
+4. In P1–P4 die gewünschte Controller-Aktion linksklicken und anschließend eine beliebige Keyboard-Taste drücken. Auch `Esc`, `Backspace`, `Entf`, Funktionstasten, Numpad und Modifier sind belegbar. Ein Rechtsklick entfernt eine einzelne Zuordnung; „Alle Belegungen löschen“ leert den ganzen Spieler.
 5. Mit `Win+R` → `joy.cpl` die vier Xbox-360-Controller prüfen.
 
-Die Standardbelegung nutzt gebräuchliche I-PAC-Tasten für P1/P2. Weil I-PAC-Konfigurationen variieren, sollte jede Installation die Belegung einmal prüfen. P3/P4 sind standardmäßig leer.
+Die mitgelieferte Startbelegung verwendet gebräuchliche Arcade-Keyboard-Tasten für P1/P2 und lässt P3/P4 leer. Sie ist nur ein Ausgangspunkt: Alle Aktionen können unabhängig geändert oder gelöscht werden.
 
 ## CLI
 
 ```text
-IPAC.XInputBridge.exe --start
-IPAC.XInputBridge.exe --stop
-IPAC.XInputBridge.exe --toggle
-IPAC.XInputBridge.exe --status
-IPAC.XInputBridge.exe --profile "Arcade Standard"
-IPAC.XInputBridge.exe --show
-IPAC.XInputBridge.exe --hide
-IPAC.XInputBridge.exe --tray
-IPAC.XInputBridge.exe --exit
+XInput.KeyBridge.exe --start
+XInput.KeyBridge.exe --stop
+XInput.KeyBridge.exe --toggle
+XInput.KeyBridge.exe --status
+XInput.KeyBridge.exe --profile "Standard"
+XInput.KeyBridge.exe --show
+XInput.KeyBridge.exe --hide
+XInput.KeyBridge.exe --tray
+XInput.KeyBridge.exe --exit
 ```
 
 Die erste Instanz stellt einen nur für den aktuellen Windows-Benutzer zugänglichen Named-Pipe-Endpunkt bereit. Weitere CLI-Aufrufe steuern diese Instanz. `--start` startet die GUI bei Bedarf; Befehle wie `--stop` liefern Exitcode 2, wenn die App nicht läuft.
@@ -71,7 +71,7 @@ Mit .NET 8 SDK auf Windows:
 ./scripts/build.ps1
 ```
 
-Das selbstenthaltende Paket landet unter `artifacts/IPAC-XInput-Bridge-win-x64`. Alternativ baut der enthaltene GitHub-Actions-Workflow auf einem Windows-Runner.
+Das selbstenthaltende Paket landet unter `artifacts/XInput-KeyBridge-win-x64`. Alternativ baut der enthaltene GitHub-Actions-Workflow auf einem Windows-Runner.
 
 ## Bekannte Grenzen
 

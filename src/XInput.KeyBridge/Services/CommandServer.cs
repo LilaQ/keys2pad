@@ -1,11 +1,11 @@
 using System.IO.Pipes;
 using System.Text;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public sealed class CommandServer : IDisposable
 {
-    public const string PipeName = "IPAC.XInputBridge.Command.v1";
+    public const string PipeName = "XInput.KeyBridge.Command.v1";
     private readonly Func<string, Task<string>> _handler;
     private readonly CancellationTokenSource _cts = new();
     private readonly Task _loop;

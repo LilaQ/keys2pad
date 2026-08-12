@@ -3,28 +3,28 @@
 SetWorkingDir %A_ScriptDir%
 
 ; Als laufendes AutoHotkey-Script des Emulators verwenden.
-BridgeExe := A_ScriptDir . "\IPAC.XInputBridge.exe"
-ProfileName := "Arcade Standard"
+BridgeExe := A_ScriptDir . "\XInput.KeyBridge.exe"
+ProfileName := "Standard"
 
 IfNotExist, %BridgeExe%
 {
-    PackageExe := A_ScriptDir . "\..\..\IPAC.XInputBridge.exe"
+    PackageExe := A_ScriptDir . "\..\..\XInput.KeyBridge.exe"
     IfExist, %PackageExe%
         BridgeExe := PackageExe
 }
 
 IfNotExist, %BridgeExe%
 {
-    MsgBox, 16, LaunchBox / IPAC, IPAC.XInputBridge.exe nicht gefunden:`n%BridgeExe%
+    MsgBox, 16, LaunchBox / KeyBridge, XInput.KeyBridge.exe nicht gefunden:`n%BridgeExe%
     ExitApp, 2
 }
 
 RunWait, "%BridgeExe%" --start,, Hide
 RunWait, "%BridgeExe%" --profile "%ProfileName%",, Hide
-OnExit, StopIPACBridge
+OnExit, StopKeyBridge
 return
 
-StopIPACBridge:
+StopKeyBridge:
 IfExist, %BridgeExe%
     RunWait, "%BridgeExe%" --stop,, Hide
 ExitApp

@@ -1,4 +1,4 @@
-namespace IPAC.XInputBridge.UI;
+namespace XInput.KeyBridge.UI;
 
 internal static class PromptDialog
 {

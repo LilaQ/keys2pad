@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace IPAC.XInputBridge.UI;
+namespace XInput.KeyBridge.UI;
 
 public sealed class LegalForm : Form
 {
@@ -20,11 +20,11 @@ public sealed class LegalForm : Form
             BorderStyle = BorderStyle.None,
             Padding = new Padding(12),
             Text = $"""
-                IPAC XInput Bridge — Rechtliches & Compliance
+                XInput KeyBridge — Rechtliches & Compliance
                 Version {Application.ProductVersion}
 
                 Datenschutz und Datenverarbeitung
-                Die App arbeitet lokal. Sie liest den aktuellen Zustand der konfigurierten Tastaturtasten und die Windows-Geräteinformationen verbundener Controller. Konfigurationen werden unter %LOCALAPPDATA%\IPAC XInput Bridge gespeichert. Es gibt keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung oder Netzwerkübertragung durch die App.
+                Die App arbeitet lokal. Sie liest den aktuellen Zustand der konfigurierten Tastaturtasten und die Windows-Geräteinformationen verbundener Controller. Konfigurationen werden unter %LOCALAPPDATA%\XInput KeyBridge gespeichert. Es gibt keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung oder Netzwerkübertragung durch die App.
 
                 Berechtigungen
                 Die App benötigt keine Administratorrechte. Optional schreibt sie einen Autostart-Eintrag für den aktuellen Benutzer. Der separat zu installierende ViGEmBus-Treiber ist ein Kernel-Treiber und benötigt bei seiner Installation Administratorrechte.

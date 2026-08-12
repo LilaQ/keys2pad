@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 
-namespace IPAC.XInputBridge.Models;
+namespace XInput.KeyBridge.Models;
 
 public sealed class AppConfig
 {
-    public string ActiveProfile { get; set; } = "Arcade Standard";
+    public string ActiveProfile { get; set; } = "Standard";
     public bool StartEnabled { get; set; } = true;
     public bool MinimizeToTray { get; set; } = true;
     public int PollIntervalMs { get; set; } = 8;
@@ -17,7 +17,7 @@ public sealed class AppConfig
 
     public static AppConfig CreateDefault() => new()
     {
-        Profiles = [ProfileConfig.CreateDefault("Arcade Standard")]
+        Profiles = [ProfileConfig.CreateDefault("Standard")]
     };
 }
 
@@ -50,7 +50,7 @@ public sealed class PlayerConfig
 
     public static PlayerConfig CreateDefault(int playerIndex)
     {
-        // P1/P2 follow common I-PAC defaults; P3/P4 are intentionally unbound.
+        // P1/P2 use common arcade-keyboard defaults; every binding is editable.
         Dictionary<VirtualInput, int> keys = playerIndex switch
         {
             0 => Bind(Keys.Up, Keys.Down, Keys.Left, Keys.Right,
@@ -113,6 +113,7 @@ public enum VirtualInput
     RightTrigger,
     Back,
     Start,
+    Guide,
     LeftThumb,
     RightThumb
 }

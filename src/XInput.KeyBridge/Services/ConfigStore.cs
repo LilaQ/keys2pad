@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using IPAC.XInputBridge.Models;
+using XInput.KeyBridge.Models;
 
-namespace IPAC.XInputBridge.Services;
+namespace XInput.KeyBridge.Services;
 
 public sealed class ConfigStore
 {
@@ -14,14 +14,25 @@ public sealed class ConfigStore
 
     public string DirectoryPath { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "IPAC XInput Bridge");
+        "XInput KeyBridge");
 
     public string FilePath => Path.Combine(DirectoryPath, "config.json");
+
+    private static string LegacyFilePath => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "IPAC XInput Bridge",
+        "config.json");
 
     public AppConfig Load()
     {
         try
         {
+            if (!File.Exists(FilePath) && File.Exists(LegacyFilePath))
+            {
+                Directory.CreateDirectory(DirectoryPath);
+                File.Copy(LegacyFilePath, FilePath);
+            }
+
             if (!File.Exists(FilePath))
             {
                 return AppConfig.CreateDefault();
