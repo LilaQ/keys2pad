@@ -47,6 +47,7 @@ public sealed class MainForm : Form
     private readonly NumericUpDown _pollInterval = new();
     private readonly NotifyIcon _trayIcon;
     private readonly Dictionary<(int Player, VirtualInput Input), Button> _mappingButtons = [];
+    private readonly Dictionary<int, ControllerDiagram> _controllerDiagrams = [];
     private (int Player, VirtualInput Input, Button Button)? _capture;
     private bool _reallyClose;
     private bool _updatingAutostart;
@@ -59,8 +60,8 @@ public sealed class MainForm : Form
 
         Text = "XInput KeyBridge";
         StartPosition = FormStartPosition.CenterScreen;
-        MinimumSize = new Size(780, 620);
-        Size = new Size(900, 760);
+        MinimumSize = new Size(860, 720);
+        Size = new Size(1040, 920);
         KeyPreview = true;
 
         MainMenuStrip = BuildMenu();
@@ -206,7 +207,13 @@ public sealed class MainForm : Form
     {
         _capture = null;
         _mappingButtons.Clear();
+        _controllerDiagrams.Clear();
+        TabPage[] oldPages = _playerTabs.TabPages.Cast<TabPage>().ToArray();
         _playerTabs.TabPages.Clear();
+        foreach (TabPage oldPage in oldPages)
+        {
+            oldPage.Dispose();
+        }
         ProfileConfig profile = _config.CurrentProfile;
 
         for (int playerIndex = 0; playerIndex < 4; playerIndex++)
@@ -214,6 +221,40 @@ public sealed class MainForm : Form
             int capturedPlayer = playerIndex;
             PlayerConfig player = profile.Players[playerIndex];
             TabPage page = new($"P{playerIndex + 1}");
+            TableLayoutPanel pageLayout = new()
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 2,
+                Padding = new Padding(6)
+            };
+            pageLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 55));
+            pageLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
+
+            ControllerDiagram diagram = new()
+            {
+                Dock = DockStyle.Fill,
+                Margin = new Padding(0, 0, 0, 6),
+                BindingTextProvider = input => KeyName(player, input)
+            };
+            diagram.BindingRequested += (_, e) =>
+            {
+                if (_mappingButtons.TryGetValue((capturedPlayer, e.Input), out Button? mappingButton))
+                {
+                    BeginCapture(capturedPlayer, e.Input, mappingButton);
+                }
+            };
+            diagram.BindingCleared += (_, e) =>
+            {
+                if (_mappingButtons.TryGetValue((capturedPlayer, e.Input), out Button? mappingButton))
+                {
+                    ClearBinding(capturedPlayer, e.Input, mappingButton);
+                    diagram.SelectedInput = e.Input;
+                }
+            };
+            _controllerDiagrams[capturedPlayer] = diagram;
+            pageLayout.Controls.Add(diagram, 0, 0);
+
             TableLayoutPanel table = new()
             {
                 Dock = DockStyle.Fill,
@@ -245,12 +286,17 @@ public sealed class MainForm : Form
                 table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
                 table.Controls.Add(new Label { Text = label, AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(3, 8, 3, 3) }, 0, row);
                 Button button = new() { Dock = DockStyle.Top, Height = 28, Tag = input, Text = KeyName(player, input) };
-                button.Click += (_, _) => BeginCapture(capturedPlayer, input, button);
+                button.Click += (_, _) =>
+                {
+                    diagram.SelectedInput = input;
+                    BeginCapture(capturedPlayer, input, button);
+                };
                 button.MouseUp += (_, e) =>
                 {
                     if (e.Button == MouseButtons.Right)
                     {
                         ClearBinding(capturedPlayer, input, button);
+                        diagram.SelectedInput = input;
                     }
                 };
                 _mappingButtons[(capturedPlayer, input)] = button;
@@ -266,7 +312,8 @@ public sealed class MainForm : Form
             actions.Controls.Add(reset);
             table.Controls.Add(actions, 0, row);
             table.SetColumnSpan(actions, 2);
-            page.Controls.Add(table);
+            pageLayout.Controls.Add(table, 0, 1);
+            page.Controls.Add(pageLayout);
             _playerTabs.TabPages.Add(page);
         }
     }
@@ -301,6 +348,11 @@ public sealed class MainForm : Form
         player.Bindings[capture.Input] = (int)e.KeyCode;
 
         capture.Button.Text = KeyName(player, capture.Input);
+        if (_controllerDiagrams.TryGetValue(capture.Player, out ControllerDiagram? diagram))
+        {
+            diagram.SelectedInput = capture.Input;
+            diagram.RefreshBindingDisplay();
+        }
         _capture = null;
         e.Handled = true;
         e.SuppressKeyPress = true;
@@ -320,6 +372,10 @@ public sealed class MainForm : Form
         PlayerConfig player = _config.CurrentProfile.Players[playerIndex];
         player.Bindings.Remove(input);
         button.Text = KeyName(player, input);
+        if (_controllerDiagrams.TryGetValue(playerIndex, out ControllerDiagram? diagram))
+        {
+            diagram.RefreshBindingDisplay();
+        }
         Save();
     }
 

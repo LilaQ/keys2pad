@@ -17,6 +17,7 @@ Windows weist XInput-Indizes selbst zu und stellt keine API zum direkten Setzen 
 ## Funktionen
 
 - vier unabhängig konfigurierbare P1–P4-Mappings; jede emulierbare Controller-Aktion kann auf jede Windows-Taste gelegt werden
+- interaktive, skalierbare Controller-Frontansicht: direkt auf Stickrichtungen, L3/R3, D-Pad, ABXY, Schultertasten, Trigger oder Mitteltasten klicken
 - Profile erstellen, duplizieren, löschen und per CLI wählen
 - digitale Keyboard-Eingaben für beide Sticks, D-Pad, ABXY, Schultertasten, Trigger, Start/Back, Guide/Xbox und Stick-Klicks
 - automatische Erkennung echter Xbox/XInput-Pads, ViGEm-Geräte werden im Windows-Gerätebaum ausgeschlossen
@@ -38,7 +39,7 @@ ViGEmBus wurde 2023 eingestellt und erhält keine Updates mehr. Die App installi
 1. ViGEmBus aus dem offiziellen Release installieren (Administratorrechte werden nur hierfür benötigt).
 2. Den Release-ZIP der Bridge entpacken.
 3. `XInput.KeyBridge.exe` starten.
-4. In P1–P4 die gewünschte Controller-Aktion linksklicken und anschließend eine beliebige Keyboard-Taste drücken. Auch `Esc`, `Backspace`, `Entf`, Funktionstasten, Numpad und Modifier sind belegbar. Ein Rechtsklick entfernt eine einzelne Zuordnung; „Alle Belegungen löschen“ leert den ganzen Spieler.
+4. In P1–P4 den gewünschten Bereich der Controllergrafik oder den Eintrag in der Liste anklicken und anschließend eine beliebige Keyboard-Taste drücken. Auch `Esc`, `Backspace`, `Entf`, Funktionstasten, Numpad und Modifier sind belegbar. Ein Rechtsklick entfernt eine einzelne Zuordnung; „Alle Belegungen löschen“ leert den ganzen Spieler.
 5. Mit `Win+R` → `joy.cpl` die vier Xbox-360-Controller prüfen.
 
 Die mitgelieferte Startbelegung verwendet gebräuchliche Arcade-Keyboard-Tasten für P1/P2 und lässt P3/P4 leer. Sie ist nur ein Ausgangspunkt: Alle Aktionen können unabhängig geändert oder gelöscht werden.
@@ -71,7 +72,7 @@ Mit .NET 8 SDK auf Windows:
 ./scripts/build.ps1
 ```
 
-Das selbstenthaltende Paket landet unter `artifacts/XInput-KeyBridge-win-x64`. Alternativ baut der enthaltene GitHub-Actions-Workflow auf einem Windows-Runner.
+Das selbstenthaltende Paket landet unter `artifacts/XInput-KeyBridge-win-x64`. Build, Tests und Packaging werden lokal ausgeführt; das Repository verwendet keine GitHub-Actions-Runner.
 
 ## Bekannte Grenzen
 
