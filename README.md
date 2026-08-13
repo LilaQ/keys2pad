@@ -52,13 +52,10 @@ On Windows with the .NET 8 SDK:
 ./scripts/build.ps1
 ```
 
-Builds and releases are produced locally; this repository does not use GitHub Actions or hosted runners.
-
 ## Notes
 
 - Keyboard input is digital: sticks and triggers output 0 or 100 percent.
-- ViGEmBus is archived and no longer maintained. Use only its official signed release and decide whether that dependency is appropriate for your machine.
+- ViGEmBus is archived and no longer maintained.
 - The current release is unsigned and marked as a prerelease.
-- Privacy, third-party notices and unresolved release/compliance decisions are documented under [`docs`](docs).
 
 Support and bug reports: [GitHub Issues](https://github.com/LilaQ/keys2pad/issues)
