@@ -15,7 +15,7 @@ Dieses Dokument ist eine technische Release-Akte, keine Rechtsberatung und keine
 | Drittanbieter/OSS | ViGEm.Client MIT, ViGEmBus BSD-3-Clause, .NET Runtime | vollständige Lizenztexte/Notices aus finalem Publish-Paket beilegen und SBOM erzeugen |
 | Tracking/Analytics/Ads | keine | finalen Dependency- und Traffic-Scan dokumentieren |
 | Konten/Löschung | keine Konten; lokale Config manuell löschbar | Löschhinweis im finalen Supporttext bestätigen |
-| Zahlungen/Abos | keine | bei Änderung neu prüfen |
+| Zahlungen/Abos | keine In-App-Zahlungen oder Abos; freiwilliger externer Unterstützungslink zu Buy Me a Coffee | externen Link und Angaben des Zahlungsanbieters bei Änderungen erneut prüfen |
 | Verschlüsselung/Export | keine eigene Kryptografie; Windows Named Pipe CurrentUserOnly | Export-/Sanktionsprüfung entsprechend Distributionsländern durch Eigentümer |
 | Alters-/Inhaltsrating | reines Eingabewerkzeug, kein kuratierter Inhalt | Anforderungen des gewählten Stores/Vertriebskanals prüfen |
 | Barrierefreiheit | native Windows-Controls, Tastaturbedienung grundsätzlich möglich | NVDA/Narrator, Kontrast, DPI 100–200 %, Keyboard-only und Fokusreihenfolge testen; keine Erklärung vor Test abgeben |

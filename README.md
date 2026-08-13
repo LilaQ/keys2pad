@@ -6,6 +6,7 @@ Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encode
 
 [![Download](https://img.shields.io/github/v/release/LilaQ/keys2pad?include_prereleases&label=Download&style=for-the-badge)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-2674d9?style=for-the-badge&logo=windows)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
+[![Buy me a beer](https://img.shields.io/badge/Buy_me_a_beer-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=000)](https://buymeacoffee.com/lilaq)
 
 ![Keys2Pad controller mapping](docs/assets/keys2pad-ui.png)
 
@@ -61,5 +62,3 @@ Builds and releases are produced locally; this repository does not use GitHub Ac
 - Privacy, third-party notices and unresolved release/compliance decisions are documented under [`docs`](docs).
 
 Support and bug reports: [GitHub Issues](https://github.com/LilaQ/keys2pad/issues)
-
-<!-- A real Buy me a beer button belongs here once the owner provides an approved payment URL. -->
