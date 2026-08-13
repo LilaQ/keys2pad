@@ -1,12 +1,12 @@
 using Microsoft.Win32;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public static class AutostartService
 {
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "XInput KeyBridge";
-    private const string LegacyValueName = "IPAC XInput Bridge";
+    private const string ValueName = "Keys2Pad";
+    private static readonly string[] LegacyValueNames = ["XInput KeyBridge", "IPAC XInput Bridge"];
 
     public static bool IsEnabled()
     {
@@ -22,12 +22,18 @@ public static class AutostartService
             string executable = Environment.ProcessPath
                 ?? throw new InvalidOperationException("Programmpfad konnte nicht ermittelt werden.");
             key.SetValue(ValueName, $"\"{executable}\" --tray --start", RegistryValueKind.String);
-            key.DeleteValue(LegacyValueName, throwOnMissingValue: false);
+            foreach (string legacyValueName in LegacyValueNames)
+            {
+                key.DeleteValue(legacyValueName, throwOnMissingValue: false);
+            }
         }
         else
         {
             key.DeleteValue(ValueName, throwOnMissingValue: false);
-            key.DeleteValue(LegacyValueName, throwOnMissingValue: false);
+            foreach (string legacyValueName in LegacyValueNames)
+            {
+                key.DeleteValue(legacyValueName, throwOnMissingValue: false);
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
-using XInput.KeyBridge.Models;
+using Keys2Pad.Models;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public sealed class VirtualControllerService : IDisposable
 {

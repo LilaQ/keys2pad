@@ -8,6 +8,6 @@
     <SelfContained>true</SelfContained>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../src/XInput.KeyBridge/XInput.KeyBridge.csproj" />
+    <ProjectReference Include="../../src/Keys2Pad/Keys2Pad.csproj" />
   </ItemGroup>
 </Project>

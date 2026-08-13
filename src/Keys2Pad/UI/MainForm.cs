@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using XInput.KeyBridge.Models;
-using XInput.KeyBridge.Services;
+using Keys2Pad.Models;
+using Keys2Pad.Services;
 
-namespace XInput.KeyBridge.UI;
+namespace Keys2Pad.UI;
 
 public sealed class MainForm : Form
 {
@@ -58,7 +58,7 @@ public sealed class MainForm : Form
         _store = store;
         _coordinator = coordinator;
 
-        Text = "XInput KeyBridge";
+        Text = "Keys2Pad";
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(860, 720);
         Size = new Size(1040, 920);
@@ -77,7 +77,7 @@ public sealed class MainForm : Form
         _trayIcon = new NotifyIcon
         {
             Icon = SystemIcons.Application,
-            Text = "XInput KeyBridge",
+            Text = "Keys2Pad",
             ContextMenuStrip = trayMenu,
             Visible = true
         };
@@ -124,7 +124,7 @@ public sealed class MainForm : Form
         help.DropDownItems.Add("Rechtliches & Compliance", null, (_, _) => new LegalForm().ShowDialog(this));
         help.DropDownItems.Add("Über", null, (_, _) => MessageBox.Show(
             this,
-            $"XInput KeyBridge\nVersion {Application.ProductVersion}\n\nKeyboard zu XInput für Windows 10/11.",
+            $"Keys2Pad\nVersion {Application.ProductVersion}\n\nKeyboard zu XInput für Windows 10/11.",
             "Über", MessageBoxButtons.OK, MessageBoxIcon.Information));
 
         menu.Items.Add(file);
@@ -518,8 +518,8 @@ public sealed class MainForm : Form
             : "Keine virtuellen Controller verbunden";
         _toggleButton.Text = status.Enabled ? "Bridge stoppen" : "Bridge starten";
         _trayIcon.Text = status.Enabled
-            ? $"XInput KeyBridge: {status.PhysicalControllers} echt, {status.VirtualControllers} virtuell"
-            : "XInput KeyBridge: gestoppt";
+            ? $"Keys2Pad: {status.PhysicalControllers} echt, {status.VirtualControllers} virtuell"
+            : "Keys2Pad: gestoppt";
     }
 
     public Task<string> ExecuteCommandAsync(string command)

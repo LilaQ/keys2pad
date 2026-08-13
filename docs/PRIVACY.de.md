@@ -1,16 +1,16 @@
-# Datenschutzhinweis – XInput KeyBridge
+# Datenschutzhinweis – Keys2Pad
 
-Stand: 12. August 2026 · Entwicklungsfassung 0.2.0
+Stand: 13. August 2026 · Entwicklungsfassung 0.4.0
 
 ## Verarbeitung
 
-XInput KeyBridge arbeitet lokal auf dem Windows-PC. Die App verarbeitet:
+Keys2Pad arbeitet lokal auf dem Windows-PC. Die App verarbeitet:
 
 - den momentanen gedrückt/nicht-gedrückt-Zustand der vom Benutzer konfigurierten Tastaturtasten;
 - Windows-Geräteinformationen, die zur Zählung echter XInput-Controller und zum Ausschluss eigener ViGEm-Geräte nötig sind;
 - vom Benutzer gewählte Profile, Tastenbelegungen und App-Einstellungen.
 
-Konfigurationen werden im Benutzerprofil unter `%LOCALAPPDATA%\XInput KeyBridge\config.json` gespeichert. Die App enthält keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung, Analyse-SDKs oder eigene Netzwerkkommunikation. Daten werden nicht von der App an Dritte übertragen.
+Konfigurationen werden im Benutzerprofil unter `%LOCALAPPDATA%\Keys2Pad\config.json` gespeichert. Die App enthält keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung, Analyse-SDKs oder eigene Netzwerkkommunikation. Daten werden nicht von der App an Dritte übertragen.
 
 ## Berechtigungen und Löschung
 
@@ -20,4 +20,8 @@ Der separat vom Benutzer installierte ViGEmBus-Treiber benötigt bei der Install
 
 ## Verantwortlicher und Kontakt
 
-**RELEASE-BLOCKER:** Verantwortliche juristische/natürliche Person, ladungsfähige Kontaktangaben, Supportadresse und eigentümerfreigegebene öffentliche Datenschutz-URL wurden noch nicht bereitgestellt. Diese Entwicklungsfassung behauptet deshalb keinen Veröffentlichungsstatus.
+Öffentliche Fassung dieses Hinweises: https://github.com/LilaQ/keys2pad/blob/main/docs/PRIVACY.de.md
+
+Support und Fehlerberichte: https://github.com/LilaQ/keys2pad/issues
+
+**RELEASE-BLOCKER:** Verantwortliche juristische/natürliche Person, ladungsfähige Kontaktangaben und eine gesonderte Supportadresse wurden noch nicht bereitgestellt. Diese Entwicklungsfassung behauptet deshalb keinen vollständigen Veröffentlichungsstatus.

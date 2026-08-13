@@ -1,7 +1,7 @@
 using System.Drawing.Drawing2D;
-using XInput.KeyBridge.Models;
+using Keys2Pad.Models;
 
-namespace XInput.KeyBridge.UI;
+namespace Keys2Pad.UI;
 
 public sealed class VirtualInputEventArgs(VirtualInput input) : EventArgs
 {

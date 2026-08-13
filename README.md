@@ -1,86 +1,65 @@
-# XInput KeyBridge
+# Keys2Pad
 
-Eine native Windows-App, die beliebige Keyboard-Eingaben auf bis zu vier virtuelle Xbox-360-Controller abbildet. Sie funktioniert mit normalen Tastaturen, Arcade-Encodern, Button-Boxen und Geräten wie dem Ultimarc I-PAC. Echte XInput-Controller erhalten automatisch Vorrang.
+**Turn keyboard keys into Xbox controllers on Windows.**
 
-## Verhalten der Controller-Slots
+Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encoders such as the I-PAC. Map any key to up to four virtual Xbox 360 controllers. If real Xbox controllers are connected, they automatically take the first player slots and Keys2Pad fills the rest.
 
-| Echte Controller | Virtuelle Controller | Belegung |
-|---:|---:|---|
-| 0 | 4 | P1–P4 virtuell |
-| 1 | 3 | P1 echt, P2–P4 virtuell |
-| 2 | 2 | P1–P2 echt, P3–P4 virtuell |
-| 3 | 1 | P1–P3 echt, P4 virtuell |
-| 4 | 0 | P1–P4 echt |
+[![Download](https://img.shields.io/github/v/release/LilaQ/keys2pad?include_prereleases&label=Download&style=for-the-badge)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-2674d9?style=for-the-badge&logo=windows)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
 
-Windows weist XInput-Indizes selbst zu und stellt keine API zum direkten Setzen eines Slots bereit. Bei einer Änderung der echten Controller trennt die Bridge deshalb alle virtuellen Pads für etwa 650 ms und meldet nur die noch benötigten Geräte wieder an. So können bereits verbundene echte Controller zuerst die niedrigen Indizes belegen. Ein laufendes Spiel muss Hotplug unterstützen; für maximale Zuverlässigkeit Controller vor dem Spielstart einschalten.
+![Keys2Pad controller mapping](docs/assets/keys2pad-ui.png)
 
-## Funktionen
+## Why it is useful
 
-- vier unabhängig konfigurierbare P1–P4-Mappings; jede emulierbare Controller-Aktion kann auf jede Windows-Taste gelegt werden
-- interaktive, skalierbare Controller-Frontansicht: direkt auf Stickrichtungen, L3/R3, D-Pad, ABXY, Schultertasten, Trigger oder Mitteltasten klicken
-- Profile erstellen, duplizieren, löschen und per CLI wählen
-- digitale Keyboard-Eingaben für beide Sticks, D-Pad, ABXY, Schultertasten, Trigger, Start/Back, Guide/Xbox und Stick-Klicks
-- automatische Erkennung echter Xbox/XInput-Pads, ViGEm-Geräte werden im Windows-Gerätebaum ausgeschlossen
-- Tray-Icon, Minimieren ins Tray und optionaler Autostart pro Windows-Benutzer
-- lokale JSON-Konfiguration unter `%LOCALAPPDATA%\XInput KeyBridge\config.json`
-- AutoHotkey-v1- und -v2-Skripte für LaunchBox
-- keine Konten, Telemetrie, Werbung oder Netzwerkkommunikation der App
+- map every button freely, including both sticks, L3/R3, D-pad, triggers and Guide;
+- use any mix of real and virtual controllers across P1–P4;
+- create profiles and switch them from the GUI, command line or LaunchBox;
+- run quietly in the tray and optionally start with Windows;
+- use the included AutoHotkey v1 and v2 scripts directly in LaunchBox;
+- no accounts, telemetry, ads or app network traffic.
 
-## Voraussetzungen
+Example: with two real controllers connected, they become P1 and P2. Keys2Pad creates virtual P3 and P4. Windows ultimately assigns XInput indices, so games without hot-plug support should be started after the controllers are ready.
 
-- Windows 10 oder 11
-- x64-Build (ARM64 kann über `scripts/build.ps1 -Runtime win-arm64` erstellt werden)
-- [ViGEmBus 1.22.0 aus dem offiziellen, archivierten Projekt](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0)
+## Install
 
-ViGEmBus wurde 2023 eingestellt und erhält keine Updates mehr. Die App installiert oder lädt den Kernel-Treiber absichtlich nicht automatisch. Nutze ausschließlich den signierten offiziellen Release und bewerte den Einsatz für dein System selbst.
+1. Install the official signed [ViGEmBus 1.22.0 release](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0). The archived driver is required and is not installed silently by Keys2Pad.
+2. Download and unpack the current [Keys2Pad prerelease](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0).
+3. Start `Keys2Pad.exe`, click a controller control and press the keyboard key you want.
+4. Check the result with `Win+R` → `joy.cpl`.
 
-## Installation
-
-1. ViGEmBus aus dem offiziellen Release installieren (Administratorrechte werden nur hierfür benötigt).
-2. Den Release-ZIP der Bridge entpacken.
-3. `XInput.KeyBridge.exe` starten.
-4. In P1–P4 den gewünschten Bereich der Controllergrafik oder den Eintrag in der Liste anklicken und anschließend eine beliebige Keyboard-Taste drücken. Auch `Esc`, `Backspace`, `Entf`, Funktionstasten, Numpad und Modifier sind belegbar. Ein Rechtsklick entfernt eine einzelne Zuordnung; „Alle Belegungen löschen“ leert den ganzen Spieler.
-5. Mit `Win+R` → `joy.cpl` die vier Xbox-360-Controller prüfen.
-
-Die mitgelieferte Startbelegung verwendet gebräuchliche Arcade-Keyboard-Tasten für P1/P2 und lässt P3/P4 leer. Sie ist nur ein Ausgangspunkt: Alle Aktionen können unabhängig geändert oder gelöscht werden.
-
-## CLI
+## Command line
 
 ```text
-XInput.KeyBridge.exe --start
-XInput.KeyBridge.exe --stop
-XInput.KeyBridge.exe --toggle
-XInput.KeyBridge.exe --status
-XInput.KeyBridge.exe --profile "Standard"
-XInput.KeyBridge.exe --show
-XInput.KeyBridge.exe --hide
-XInput.KeyBridge.exe --tray
-XInput.KeyBridge.exe --exit
+Keys2Pad.exe --start
+Keys2Pad.exe --stop
+Keys2Pad.exe --toggle
+Keys2Pad.exe --status
+Keys2Pad.exe --profile "Standard"
+Keys2Pad.exe --show
+Keys2Pad.exe --hide
+Keys2Pad.exe --tray
+Keys2Pad.exe --exit
 ```
 
-Die erste Instanz stellt einen nur für den aktuellen Windows-Benutzer zugänglichen Named-Pipe-Endpunkt bereit. Weitere CLI-Aufrufe steuern diese Instanz. `--start` startet die GUI bei Bedarf; Befehle wie `--stop` liefern Exitcode 2, wenn die App nicht läuft.
+LaunchBox examples are in [`LaunchBox/AHK-v2`](LaunchBox/AHK-v2) and [`LaunchBox/AHK-v1`](LaunchBox/AHK-v1).
 
-## LaunchBox / AutoHotkey
+## Build
 
-Fertige Skripte liegen unter [`LaunchBox/AHK-v2`](LaunchBox/AHK-v2) und [`LaunchBox/AHK-v1`](LaunchBox/AHK-v1). Details stehen in [`LaunchBox/README.md`](LaunchBox/README.md).
-
-## Bauen
-
-Mit .NET 8 SDK auf Windows:
+On Windows with the .NET 8 SDK:
 
 ```powershell
 ./scripts/build.ps1
 ```
 
-Das selbstenthaltende Paket landet unter `artifacts/XInput-KeyBridge-win-x64`. Build, Tests und Packaging werden lokal ausgeführt; das Repository verwendet keine GitHub-Actions-Runner.
+Builds and releases are produced locally; this repository does not use GitHub Actions or hosted runners.
 
-## Bekannte Grenzen
+## Notes
 
-- XInput-Slotnummern sind laut Microsoft automatisch und nicht direkt änderbar. Das Trennen/Neuverbinden ist daher eine Best-Effort-Strategie des Betriebssystems.
-- Spiele ohne Controller-Hotplug sollten erst nach der endgültigen Controller-Auswahl gestartet werden.
-- Die Eingabe ist digital: Keyboard-Tasten erzeugen 0/100 % Stick- bzw. Triggerwerte.
-- Die Erkennung zählt aktive Windows-XUSB-Geräteknoten. Exotische XInput-Wrapper oder Remote-/Streaming-Treiber können eine manuelle Anpassung erfordern.
+- Keyboard input is digital: sticks and triggers output 0 or 100 percent.
+- ViGEmBus is archived and no longer maintained. Use only its official signed release and decide whether that dependency is appropriate for your machine.
+- The current release is unsigned and marked as a prerelease.
+- Privacy, third-party notices and unresolved release/compliance decisions are documented under [`docs`](docs).
 
-## Datenschutz und Veröffentlichung
+Support and bug reports: [GitHub Issues](https://github.com/LilaQ/keys2pad/issues)
 
-Die ausführlichen lokalen Hinweise stehen in der App unter **Hilfe → Rechtliches & Compliance** sowie unter [`docs/PRIVACY.de.md`](docs/PRIVACY.de.md) und [`docs/THIRD-PARTY-NOTICES.md`](docs/THIRD-PARTY-NOTICES.md). Vor öffentlicher Distribution sind die in [`docs/RELEASE-COMPLIANCE.md`](docs/RELEASE-COMPLIANCE.md) gekennzeichneten Eigentümerentscheidungen und Release-Blocker zu schließen.
+<!-- A real Buy me a beer button belongs here once the owner provides an approved payment URL. -->

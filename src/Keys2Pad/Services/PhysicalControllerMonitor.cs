@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public interface IPhysicalControllerCounter
 {

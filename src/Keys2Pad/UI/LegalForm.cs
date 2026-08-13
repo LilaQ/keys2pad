@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace XInput.KeyBridge.UI;
+namespace Keys2Pad.UI;
 
 public sealed class LegalForm : Form
 {
@@ -20,17 +20,17 @@ public sealed class LegalForm : Form
             BorderStyle = BorderStyle.None,
             Padding = new Padding(12),
             Text = $"""
-                XInput KeyBridge — Rechtliches & Compliance
+                Keys2Pad — Rechtliches & Compliance
                 Version {Application.ProductVersion}
 
                 Datenschutz und Datenverarbeitung
-                Die App arbeitet lokal. Sie liest den aktuellen Zustand der konfigurierten Tastaturtasten und die Windows-Geräteinformationen verbundener Controller. Konfigurationen werden unter %LOCALAPPDATA%\XInput KeyBridge gespeichert. Es gibt keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung oder Netzwerkübertragung durch die App.
+                Die App arbeitet lokal. Sie liest den aktuellen Zustand der konfigurierten Tastaturtasten und die Windows-Geräteinformationen verbundener Controller. Konfigurationen werden unter %LOCALAPPDATA%\Keys2Pad gespeichert. Es gibt keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung oder Netzwerkübertragung durch die App.
 
                 Berechtigungen
                 Die App benötigt keine Administratorrechte. Optional schreibt sie einen Autostart-Eintrag für den aktuellen Benutzer. Der separat zu installierende ViGEmBus-Treiber ist ein Kernel-Treiber und benötigt bei seiner Installation Administratorrechte.
 
                 Nutzung / Gewährleistung
-                Diese Entwicklungsfassung wird ohne Gewähr bereitgestellt. Vor einer öffentlichen Veröffentlichung müssen Herausgeberidentität, Nutzungsbedingungen bzw. EULA und Supportkontakt durch den Eigentümer festgelegt werden.
+                Diese Entwicklungsfassung wird ohne Gewähr bereitgestellt. Herausgeberidentität, Nutzungsbedingungen bzw. EULA und eine gesonderte Supportadresse müssen noch durch den Eigentümer festgelegt werden.
 
                 Drittanbieter
                 Nefarius.ViGEm.Client 1.21.256 (MIT) und ViGEmBus (BSD-3-Clause). ViGEmBus wurde vom Hersteller eingestellt. Projekt und Binär-Releases:
@@ -39,8 +39,10 @@ public sealed class LegalForm : Form
                 Microsoft .NET 8 Runtime — MIT und weitere Hinweise:
                 https://github.com/dotnet/runtime
 
-                Support
-                Noch kein eigentümerfreigegebener öffentlicher Support- oder Datenschutz-Link hinterlegt. Dies ist ein Release-Blocker, kein behaupteter Compliance-Status. Lokale Dokumentation liegt dem Paket im Ordner docs bei.
+                Datenschutz und Support
+                https://github.com/LilaQ/keys2pad/blob/main/docs/PRIVACY.de.md
+                https://github.com/LilaQ/keys2pad/issues
+                Lokale Dokumentation liegt dem Paket zusätzlich im Ordner docs bei.
 
                 Sicherheit und Einschränkungen
                 XInput vergibt P1–P4 automatisch. Bei Änderungen echter Controller trennt die App virtuelle Geräte kurz und meldet sie danach erneut an. Laufende Spiele erkennen diese Änderung je nach Implementierung unterschiedlich.

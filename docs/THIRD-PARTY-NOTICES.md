@@ -1,6 +1,6 @@
 # Drittanbieterhinweise
 
-Stand: 12. August 2026
+Stand: 13. August 2026
 
 ## Nefarius.ViGEm.Client 1.21.256
 

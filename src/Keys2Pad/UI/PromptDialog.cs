@@ -1,4 +1,4 @@
-namespace XInput.KeyBridge.UI;
+namespace Keys2Pad.UI;
 
 internal static class PromptDialog
 {

@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XInput.KeyBridge", "src\XInput.KeyBridge\XInput.KeyBridge.csproj", "{E2322E34-7A0E-4A92-A224-CB92740CA231}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keys2Pad", "src\Keys2Pad\Keys2Pad.csproj", "{E2322E34-7A0E-4A92-A224-CB92740CA231}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XInput.KeyBridge.Tests", "tests\XInput.KeyBridge.Tests\XInput.KeyBridge.Tests.csproj", "{3EFD88E9-988E-49EA-B540-C4068194E25B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keys2Pad.Tests", "tests\Keys2Pad.Tests\Keys2Pad.Tests.csproj", "{3EFD88E9-988E-49EA-B540-C4068194E25B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

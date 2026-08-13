@@ -1,4 +1,4 @@
-using XInput.KeyBridge.Models;
+using Keys2Pad.Models;
 
 AppConfig config = AppConfig.CreateDefault();
 Assert(config.Profiles.Count == 1, "Ein Default-Profil");

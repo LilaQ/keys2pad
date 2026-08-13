@@ -1,11 +1,11 @@
 using System.IO.Pipes;
 using System.Text;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public sealed class CommandServer : IDisposable
 {
-    public const string PipeName = "XInput.KeyBridge.Command.v1";
+    public const string PipeName = "Keys2Pad.Command.v1";
     private readonly Func<string, Task<string>> _handler;
     private readonly CancellationTokenSource _cts = new();
     private readonly Task _loop;

@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using XInput.KeyBridge.Models;
+using Keys2Pad.Models;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public sealed class ConfigStore
 {
@@ -14,23 +14,29 @@ public sealed class ConfigStore
 
     public string DirectoryPath { get; } = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "XInput KeyBridge");
+        "Keys2Pad");
 
     public string FilePath => Path.Combine(DirectoryPath, "config.json");
 
-    private static string LegacyFilePath => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "IPAC XInput Bridge",
-        "config.json");
+    private static IEnumerable<string> LegacyFilePaths
+    {
+        get
+        {
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            yield return Path.Combine(localAppData, "XInput KeyBridge", "config.json");
+            yield return Path.Combine(localAppData, "IPAC XInput Bridge", "config.json");
+        }
+    }
 
     public AppConfig Load()
     {
         try
         {
-            if (!File.Exists(FilePath) && File.Exists(LegacyFilePath))
+            string? legacyFilePath = LegacyFilePaths.FirstOrDefault(File.Exists);
+            if (!File.Exists(FilePath) && legacyFilePath is not null)
             {
                 Directory.CreateDirectory(DirectoryPath);
-                File.Copy(LegacyFilePath, FilePath);
+                File.Copy(legacyFilePath, FilePath);
             }
 
             if (!File.Exists(FilePath))

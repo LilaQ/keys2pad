@@ -1,7 +1,7 @@
 # Release-Compliance-Record
 
-Produkt: XInput KeyBridge<br>
-Version: 0.3.0 (Entwicklungsfassung)<br>
+Produkt: Keys2Pad<br>
+Version: 0.4.0 (Entwicklungsfassung)<br>
 Letzte Prüfung: 13. August 2026<br>
 Geplante Plattform: direkte Distribution für Windows 10/11
 
@@ -20,7 +20,7 @@ Dieses Dokument ist eine technische Release-Akte, keine Rechtsberatung und keine
 | Alters-/Inhaltsrating | reines Eingabewerkzeug, kein kuratierter Inhalt | Anforderungen des gewählten Stores/Vertriebskanals prüfen |
 | Barrierefreiheit | native Windows-Controls, Tastaturbedienung grundsätzlich möglich | NVDA/Narrator, Kontrast, DPI 100–200 %, Keyboard-only und Fokusreihenfolge testen; keine Erklärung vor Test abgeben |
 | Inhalte/Assets | System-Icon; eigene, in Code gezeichnete Controller-Vektorgrafik; keine gebündelten externen Medien | finalen Namen/Logo und Markenabgrenzung prüfen |
-| Support/Privacy URLs | nicht vorhanden | **RELEASE-BLOCKER:** echte eigentümerfreigegebene HTTPS-URLs bereitstellen |
+| Support/Privacy URLs | öffentliches GitHub-Issue-Tracking und Privacy-Dokument im Repository | gesonderte Supportadresse vom Eigentümer bereitstellen und URLs im finalen Binary prüfen |
 | Rechtliche Identität/Kontakt | nicht vorhanden | **RELEASE-BLOCKER:** Verantwortlicher, Anschrift/Region, Supportkontakt und ggf. Trader-/Seller-Status entscheiden |
 | EULA/Nutzungsbedingungen | nicht festgelegt | **RELEASE-BLOCKER:** Eigentümer entscheidet Lizenz/EULA/Gewährleistung; nichts erfinden |
 | Codesignierung | nicht eingerichtet | **RELEASE-BLOCKER:** finalen EXE-Build signieren, SmartScreen-Reputation/Installer prüfen |

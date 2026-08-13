@@ -1,13 +1,13 @@
 using System.Diagnostics;
-using XInput.KeyBridge.Models;
-using XInput.KeyBridge.Services;
-using XInput.KeyBridge.UI;
+using Keys2Pad.Models;
+using Keys2Pad.Services;
+using Keys2Pad.UI;
 
-namespace XInput.KeyBridge;
+namespace Keys2Pad;
 
 internal static class Program
 {
-    private const string MutexName = "Local\\XInput.KeyBridge.SingleInstance.v1";
+    private const string MutexName = "Local\\Keys2Pad.SingleInstance.v1";
 
     [STAThread]
     private static void Main(string[] args)
@@ -24,7 +24,7 @@ internal static class Program
 
             if (command is "stop" or "exit" or "hide" or "status")
             {
-                WriteConsole("XInput KeyBridge läuft nicht.");
+                WriteConsole("Keys2Pad läuft nicht.");
                 Environment.ExitCode = 2;
                 return;
             }
@@ -37,7 +37,7 @@ internal static class Program
                 return;
             }
 
-            WriteConsole("XInput KeyBridge konnte nicht gestartet werden.");
+            WriteConsole("Keys2Pad konnte nicht gestartet werden.");
             Environment.ExitCode = 4;
             return;
         }
@@ -45,7 +45,7 @@ internal static class Program
         using Mutex mutex = new(initiallyOwned: true, MutexName, out bool firstInstance);
         if (!firstInstance)
         {
-            WriteConsole("XInput KeyBridge läuft bereits.");
+            WriteConsole("Keys2Pad läuft bereits.");
             return;
         }
 
@@ -129,7 +129,7 @@ internal static class Program
 
     private static void ShowHelp()
     {
-        string executable = Path.GetFileName(Environment.ProcessPath) ?? "XInput.KeyBridge.exe";
+        string executable = Path.GetFileName(Environment.ProcessPath) ?? "Keys2Pad.exe";
         WriteConsole($"""
             {executable} [Option]
 

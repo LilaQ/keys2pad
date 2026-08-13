@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace XInput.KeyBridge.Models;
+namespace Keys2Pad.Models;
 
 public sealed class AppConfig
 {

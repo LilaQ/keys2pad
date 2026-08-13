@@ -4,9 +4,9 @@
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <AssemblyName>XInput.KeyBridge</AssemblyName>
-    <RootNamespace>XInput.KeyBridge</RootNamespace>
-    <Version>0.3.0</Version>
+    <AssemblyName>Keys2Pad</AssemblyName>
+    <RootNamespace>Keys2Pad</RootNamespace>
+    <Version>0.4.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <NeutralLanguage>de-DE</NeutralLanguage>
     <PublishSingleFile>true</PublishSingleFile>

@@ -2,14 +2,14 @@
 #SingleInstance Force
 
 ; BridgeExe anpassen oder EXE und Script in denselben Ordner legen.
-BridgeExe := A_ScriptDir "\XInput.KeyBridge.exe"
+BridgeExe := A_ScriptDir "\Keys2Pad.exe"
 ProfileName := "Standard"
 
-if !FileExist(BridgeExe) && FileExist(A_ScriptDir "\..\..\XInput.KeyBridge.exe")
-    BridgeExe := A_ScriptDir "\..\..\XInput.KeyBridge.exe"
+if !FileExist(BridgeExe) && FileExist(A_ScriptDir "\..\..\Keys2Pad.exe")
+    BridgeExe := A_ScriptDir "\..\..\Keys2Pad.exe"
 
 if !FileExist(BridgeExe) {
-    MsgBox "XInput.KeyBridge.exe nicht gefunden:`n" BridgeExe, "LaunchBox / KeyBridge", 16
+    MsgBox "Keys2Pad.exe nicht gefunden:`n" BridgeExe, "LaunchBox / Keys2Pad", 16
     ExitApp 2
 }
 

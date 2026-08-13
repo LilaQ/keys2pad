@@ -6,8 +6,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$project = Join-Path $root "src/XInput.KeyBridge/XInput.KeyBridge.csproj"
-$output = Join-Path $root "artifacts/XInput-KeyBridge-$Runtime"
+$project = Join-Path $root "src/Keys2Pad/Keys2Pad.csproj"
+$output = Join-Path $root "artifacts/Keys2Pad-$Runtime"
 
 dotnet restore $project -r $Runtime
 dotnet publish $project -c $Configuration -r $Runtime --self-contained true `

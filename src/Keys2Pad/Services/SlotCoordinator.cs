@@ -1,6 +1,6 @@
-using XInput.KeyBridge.Models;
+using Keys2Pad.Models;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public sealed record BridgeStatus(bool Enabled, int PhysicalControllers, int VirtualControllers, string Profile, string? Error = null);
 

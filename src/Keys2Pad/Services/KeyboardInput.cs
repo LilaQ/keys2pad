@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace XInput.KeyBridge.Services;
+namespace Keys2Pad.Services;
 
 public interface IKeyboardInput
 {
