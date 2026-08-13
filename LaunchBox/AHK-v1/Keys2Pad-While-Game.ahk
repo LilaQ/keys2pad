@@ -2,9 +2,9 @@
 #SingleInstance Force
 SetWorkingDir %A_ScriptDir%
 
-; Als laufendes AutoHotkey-Script des Emulators verwenden.
+; Use as the emulator's running AutoHotkey script.
 BridgeExe := A_ScriptDir . "\Keys2Pad.exe"
-ProfileName := "Standard"
+ProfileName := "Default"
 
 IfNotExist, %BridgeExe%
 {
@@ -15,7 +15,7 @@ IfNotExist, %BridgeExe%
 
 IfNotExist, %BridgeExe%
 {
-    MsgBox, 16, LaunchBox / Keys2Pad, Keys2Pad.exe nicht gefunden:`n%BridgeExe%
+    MsgBox, 16, LaunchBox / Keys2Pad, Keys2Pad.exe was not found:`n%BridgeExe%
     ExitApp, 2
 }
 

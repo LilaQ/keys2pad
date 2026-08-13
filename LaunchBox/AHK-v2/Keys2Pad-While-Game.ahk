@@ -1,16 +1,16 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; Dieses Script als laufendes AutoHotkey-Script des Emulators verwenden.
-; Es startet die Bridge sofort und stoppt sie beim normalen Script-Ende.
+; Use this as the emulator's running AutoHotkey script.
+; It starts the bridge immediately and stops it when the script exits normally.
 BridgeExe := A_ScriptDir "\Keys2Pad.exe"
-ProfileName := "Standard"
+ProfileName := "Default"
 
 if !FileExist(BridgeExe) && FileExist(A_ScriptDir "\..\..\Keys2Pad.exe")
     BridgeExe := A_ScriptDir "\..\..\Keys2Pad.exe"
 
 if !FileExist(BridgeExe) {
-    MsgBox "Keys2Pad.exe nicht gefunden:`n" BridgeExe, "LaunchBox / Keys2Pad", 16
+    MsgBox "Keys2Pad.exe was not found:`n" BridgeExe, "LaunchBox / Keys2Pad", 16
     ExitApp 2
 }
 

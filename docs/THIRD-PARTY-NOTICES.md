@@ -1,29 +1,29 @@
-# Drittanbieterhinweise
+# Third-Party Notices
 
-Stand: 13. August 2026
+Last updated: August 13, 2026
 
 ## Nefarius.ViGEm.Client 1.21.256
 
-- Projekt: https://github.com/nefarius/ViGEm.NET
-- Paket: https://www.nuget.org/packages/Nefarius.ViGEm.Client/1.21.256
-- Lizenz: MIT
+- Project: https://github.com/nefarius/ViGEm.NET
+- Package: https://www.nuget.org/packages/Nefarius.ViGEm.Client/1.21.256
+- License: MIT
 
-Der vollständige Lizenztext liegt unter `docs/licenses/Nefarius.ViGEm.Client-MIT.txt`.
+The complete license text is included at `docs/licenses/Nefarius.ViGEm.Client-MIT.txt`.
 
 ## ViGEmBus 1.22.0
 
-- Projekt/Quellcode: https://github.com/nefarius/ViGEmBus
-- Binär-Release: https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0
-- Lizenz: BSD-3-Clause
-- Status: vom Hersteller am 2. November 2023 eingestellt; Repository archiviert
+- Project/source: https://github.com/nefarius/ViGEmBus
+- Binary release: https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0
+- License: BSD-3-Clause
+- Status: discontinued by the manufacturer on November 2, 2023; repository archived
 
-ViGEmBus wird von diesem Projekt weder verändert noch automatisch verteilt/installiert. Benutzer werden auf den offiziellen signierten Release verwiesen. Falls der Treiber später gebündelt wird, müssen Lizenztext, Signatur, Herkunft und Redistributionsbedingungen erneut geprüft werden.
+This project neither modifies nor automatically distributes or installs ViGEmBus. Users are directed to the official signed release. If the driver is bundled in the future, its license text, signature, provenance, and redistribution terms must be reviewed again.
 
-Der vollständige Lizenztext liegt unter `docs/licenses/ViGEmBus-BSD-3-Clause.txt`.
+The complete license text is included at `docs/licenses/ViGEmBus-BSD-3-Clause.txt`.
 
 ## Microsoft .NET 8
 
-- Projekt: https://github.com/dotnet/runtime
-- Lizenz: MIT; selbstenthaltende Veröffentlichungen enthalten zusätzliche Drittanbieterhinweise aus dem Runtime-Paket
+- Project: https://github.com/dotnet/runtime
+- License: MIT; self-contained releases include additional third-party notices from the runtime package
 
-Beim Packaging sind die von `dotnet publish` erzeugten bzw. aus den Paketen stammenden Lizenz-/Notice-Dateien zu übernehmen.
+Packaging must retain the license and notice files produced by `dotnet publish` or supplied by its packages.

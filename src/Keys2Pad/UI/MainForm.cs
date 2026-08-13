@@ -8,18 +8,18 @@ public sealed class MainForm : Form
 {
     private static readonly (VirtualInput Input, string Label)[] Inputs =
     [
-        (VirtualInput.LeftStickUp, "Linker Stick hoch"),
-        (VirtualInput.LeftStickDown, "Linker Stick runter"),
-        (VirtualInput.LeftStickLeft, "Linker Stick links"),
-        (VirtualInput.LeftStickRight, "Linker Stick rechts"),
-        (VirtualInput.RightStickUp, "Rechter Stick hoch"),
-        (VirtualInput.RightStickDown, "Rechter Stick runter"),
-        (VirtualInput.RightStickLeft, "Rechter Stick links"),
-        (VirtualInput.RightStickRight, "Rechter Stick rechts"),
-        (VirtualInput.DPadUp, "Steuerkreuz hoch"),
-        (VirtualInput.DPadDown, "Steuerkreuz runter"),
-        (VirtualInput.DPadLeft, "Steuerkreuz links"),
-        (VirtualInput.DPadRight, "Steuerkreuz rechts"),
+        (VirtualInput.LeftStickUp, "Left stick up"),
+        (VirtualInput.LeftStickDown, "Left stick down"),
+        (VirtualInput.LeftStickLeft, "Left stick left"),
+        (VirtualInput.LeftStickRight, "Left stick right"),
+        (VirtualInput.RightStickUp, "Right stick up"),
+        (VirtualInput.RightStickDown, "Right stick down"),
+        (VirtualInput.RightStickLeft, "Right stick left"),
+        (VirtualInput.RightStickRight, "Right stick right"),
+        (VirtualInput.DPadUp, "D-pad up"),
+        (VirtualInput.DPadDown, "D-pad down"),
+        (VirtualInput.DPadLeft, "D-pad left"),
+        (VirtualInput.DPadRight, "D-pad right"),
         (VirtualInput.A, "A"), (VirtualInput.B, "B"),
         (VirtualInput.X, "X"), (VirtualInput.Y, "Y"),
         (VirtualInput.LeftShoulder, "LB"),
@@ -29,8 +29,8 @@ public sealed class MainForm : Form
         (VirtualInput.Back, "Back / View"),
         (VirtualInput.Start, "Start / Menu"),
         (VirtualInput.Guide, "Xbox / Guide"),
-        (VirtualInput.LeftThumb, "Linken Stick drücken"),
-        (VirtualInput.RightThumb, "Rechten Stick drücken")
+        (VirtualInput.LeftThumb, "Left stick click (L3)"),
+        (VirtualInput.RightThumb, "Right stick click (R3)")
     ];
 
     private readonly AppConfig _config;
@@ -69,11 +69,11 @@ public sealed class MainForm : Form
         Controls.Add(BuildMainLayout());
 
         ContextMenuStrip trayMenu = new();
-        trayMenu.Items.Add("Öffnen", null, (_, _) => ShowWindow());
-        trayMenu.Items.Add("Bridge starten", null, (_, _) => _coordinator.Start());
-        trayMenu.Items.Add("Bridge stoppen", null, (_, _) => _coordinator.Stop());
+        trayMenu.Items.Add("Open", null, (_, _) => ShowWindow());
+        trayMenu.Items.Add("Start bridge", null, (_, _) => _coordinator.Start());
+        trayMenu.Items.Add("Stop bridge", null, (_, _) => _coordinator.Stop());
         trayMenu.Items.Add(new ToolStripSeparator());
-        trayMenu.Items.Add("Beenden", null, (_, _) => ExitApplication());
+        trayMenu.Items.Add("Exit", null, (_, _) => ExitApplication());
         _trayIcon = new NotifyIcon
         {
             Icon = SystemIcons.Application,
@@ -114,18 +114,18 @@ public sealed class MainForm : Form
     private MenuStrip BuildMenu()
     {
         MenuStrip menu = new();
-        ToolStripMenuItem file = new("Datei");
-        file.DropDownItems.Add("Konfigurationsordner öffnen", null, (_, _) =>
+        ToolStripMenuItem file = new("File");
+        file.DropDownItems.Add("Open configuration folder", null, (_, _) =>
             Process.Start(new ProcessStartInfo("explorer.exe", _store.DirectoryPath) { UseShellExecute = true }));
         file.DropDownItems.Add(new ToolStripSeparator());
-        file.DropDownItems.Add("Beenden", null, (_, _) => ExitApplication());
+        file.DropDownItems.Add("Exit", null, (_, _) => ExitApplication());
 
-        ToolStripMenuItem help = new("Hilfe");
-        help.DropDownItems.Add("Rechtliches & Compliance", null, (_, _) => new LegalForm().ShowDialog(this));
-        help.DropDownItems.Add("Über", null, (_, _) => MessageBox.Show(
+        ToolStripMenuItem help = new("Help");
+        help.DropDownItems.Add("Legal & Compliance", null, (_, _) => new LegalForm().ShowDialog(this));
+        help.DropDownItems.Add("About", null, (_, _) => MessageBox.Show(
             this,
-            $"Keys2Pad\nVersion {Application.ProductVersion}\n\nKeyboard zu XInput für Windows 10/11.",
-            "Über", MessageBoxButtons.OK, MessageBoxIcon.Information));
+            $"Keys2Pad\nVersion {Application.ProductVersion}\n\nKeyboard to XInput for Windows 10/11.",
+            "About", MessageBoxButtons.OK, MessageBoxIcon.Information));
 
         menu.Items.Add(file);
         menu.Items.Add(help);
@@ -158,7 +158,7 @@ public sealed class MainForm : Form
         statusText.Controls.Add(_slotLabel);
         _toggleButton.AutoSize = true;
         _toggleButton.Click += (_, _) => ToggleBridge();
-        Button refresh = new() { Text = "Geräte neu erkennen", AutoSize = true, Margin = new Padding(8, 3, 0, 3) };
+        Button refresh = new() { Text = "Rescan controllers", AutoSize = true, Margin = new Padding(8, 3, 0, 3) };
         refresh.Click += (_, _) => _coordinator.Rebuild();
         status.Controls.Add(statusText, 0, 0);
         status.Controls.Add(_toggleButton, 1, 0);
@@ -166,28 +166,28 @@ public sealed class MainForm : Form
         root.Controls.Add(status, 0, 0);
 
         FlowLayoutPanel profileBar = new() { Dock = DockStyle.Top, AutoSize = true, Padding = new Padding(0, 12, 0, 8) };
-        profileBar.Controls.Add(new Label { Text = "Profil:", AutoSize = true, Margin = new Padding(0, 7, 4, 0) });
+        profileBar.Controls.Add(new Label { Text = "Profile:", AutoSize = true, Margin = new Padding(0, 7, 4, 0) });
         _profiles.DropDownStyle = ComboBoxStyle.DropDownList;
         _profiles.Width = 220;
         _profiles.SelectedIndexChanged += (_, _) => SelectProfile();
         profileBar.Controls.Add(_profiles);
-        profileBar.Controls.Add(MakeButton("Neu", (_, _) => NewProfile()));
-        profileBar.Controls.Add(MakeButton("Duplizieren", (_, _) => DuplicateProfile()));
-        profileBar.Controls.Add(MakeButton("Löschen", (_, _) => DeleteProfile()));
+        profileBar.Controls.Add(MakeButton("New", (_, _) => NewProfile()));
+        profileBar.Controls.Add(MakeButton("Duplicate", (_, _) => DuplicateProfile()));
+        profileBar.Controls.Add(MakeButton("Delete", (_, _) => DeleteProfile()));
         root.Controls.Add(profileBar, 0, 1);
 
         _playerTabs.Dock = DockStyle.Fill;
         root.Controls.Add(_playerTabs, 0, 2);
 
-        GroupBox settings = new() { Text = "Verhalten", Dock = DockStyle.Bottom, AutoSize = true, Padding = new Padding(10) };
+        GroupBox settings = new() { Text = "Behavior", Dock = DockStyle.Bottom, AutoSize = true, Padding = new Padding(10) };
         FlowLayoutPanel settingsFlow = new() { Dock = DockStyle.Fill, AutoSize = true };
-        _startEnabled.Text = "Bridge beim App-Start aktivieren";
+        _startEnabled.Text = "Enable bridge when the app starts";
         _startEnabled.AutoSize = true;
         _startEnabled.CheckedChanged += (_, _) => { _config.StartEnabled = _startEnabled.Checked; Save(); };
-        _autostart.Text = "Mit Windows starten";
+        _autostart.Text = "Start with Windows";
         _autostart.AutoSize = true;
         _autostart.CheckedChanged += (_, _) => SetAutostart();
-        _minimizeToTray.Text = "Schließen/Minimieren ins Tray";
+        _minimizeToTray.Text = "Close/minimize to tray";
         _minimizeToTray.AutoSize = true;
         _pollInterval.Minimum = 4;
         _pollInterval.Maximum = 50;
@@ -265,14 +265,14 @@ public sealed class MainForm : Form
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55));
             table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45));
 
-            CheckBox enabled = new() { Text = $"Keyboard-Spieler P{playerIndex + 1} aktiv", Checked = player.Enabled, AutoSize = true };
+            CheckBox enabled = new() { Text = $"Enable virtual controller P{playerIndex + 1}", Checked = player.Enabled, AutoSize = true };
             enabled.CheckedChanged += (_, _) => { player.Enabled = enabled.Checked; Save(); };
             table.Controls.Add(enabled, 0, 0);
             table.SetColumnSpan(enabled, 2);
 
             Label instructions = new()
             {
-                Text = "Linksklick: Taste neu zuweisen · Rechtsklick: Zuordnung löschen",
+                Text = "Left-click: assign a key · Right-click: clear binding",
                 AutoSize = true,
                 ForeColor = SystemColors.GrayText,
                 Margin = new Padding(3, 3, 3, 10)
@@ -304,9 +304,9 @@ public sealed class MainForm : Form
             }
 
             FlowLayoutPanel actions = new() { AutoSize = true, Margin = new Padding(0, 9, 0, 6) };
-            Button clear = new() { Text = "Alle Belegungen löschen", AutoSize = true };
+            Button clear = new() { Text = "Clear all bindings", AutoSize = true };
             clear.Click += (_, _) => ClearPlayer(capturedPlayer);
-            Button reset = new() { Text = "Standard wiederherstellen", AutoSize = true };
+            Button reset = new() { Text = "Restore defaults", AutoSize = true };
             reset.Click += (_, _) => ResetPlayer(capturedPlayer);
             actions.Controls.Add(clear);
             actions.Controls.Add(reset);
@@ -333,7 +333,7 @@ public sealed class MainForm : Form
         }
 
         _capture = (player, input, button);
-        button.Text = "Beliebige Taste drücken …";
+        button.Text = "Press any key …";
         button.Focus();
     }
 
@@ -360,7 +360,7 @@ public sealed class MainForm : Form
     }
 
     private static string KeyName(PlayerConfig player, VirtualInput input) =>
-        player.Bindings.TryGetValue(input, out int key) ? ((Keys)key).ToString() : "— nicht belegt —";
+        player.Bindings.TryGetValue(input, out int key) ? ((Keys)key).ToString() : "— not assigned —";
 
     private void ClearBinding(int playerIndex, VirtualInput input, Button button)
     {
@@ -381,7 +381,7 @@ public sealed class MainForm : Form
 
     private void ClearPlayer(int playerIndex)
     {
-        if (MessageBox.Show(this, $"Wirklich alle Belegungen für P{playerIndex + 1} löschen?", "Belegungen löschen",
+        if (MessageBox.Show(this, $"Clear all bindings for P{playerIndex + 1}?", "Clear bindings",
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
         _config.CurrentProfile.Players[playerIndex].Bindings.Clear();
         Save();
@@ -420,7 +420,7 @@ public sealed class MainForm : Form
 
     private void NewProfile()
     {
-        string? name = PromptDialog.Ask(this, "Neues Profil", "Profilname:", "Neues Profil");
+        string? name = PromptDialog.Ask(this, "New profile", "Profile name:", "New Profile");
         if (!TryUseNewName(name)) return;
         _config.Profiles.Add(ProfileConfig.CreateDefault(name!));
         _config.ActiveProfile = name!;
@@ -432,7 +432,7 @@ public sealed class MainForm : Form
 
     private void DuplicateProfile()
     {
-        string? name = PromptDialog.Ask(this, "Profil duplizieren", "Name der Kopie:", _config.ActiveProfile + " Kopie");
+        string? name = PromptDialog.Ask(this, "Duplicate profile", "Copy name:", _config.ActiveProfile + " Copy");
         if (!TryUseNewName(name)) return;
         _config.Profiles.Add(_config.CurrentProfile.Clone(name!));
         _config.ActiveProfile = name!;
@@ -447,7 +447,7 @@ public sealed class MainForm : Form
         if (string.IsNullOrWhiteSpace(name)) return false;
         if (_config.Profiles.Any(p => p.Name.Equals(name.Trim(), StringComparison.OrdinalIgnoreCase)))
         {
-            MessageBox.Show(this, "Dieser Profilname existiert bereits.", "Profil", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, "This profile name already exists.", "Profile", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
         return true;
@@ -457,11 +457,11 @@ public sealed class MainForm : Form
     {
         if (_config.Profiles.Count == 1)
         {
-            MessageBox.Show(this, "Das letzte Profil kann nicht gelöscht werden.");
+            MessageBox.Show(this, "The last profile cannot be deleted.");
             return;
         }
 
-        if (MessageBox.Show(this, $"Profil „{_config.ActiveProfile}“ löschen?", "Profil löschen",
+        if (MessageBox.Show(this, $"Delete profile \"{_config.ActiveProfile}\"?", "Delete profile",
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
         _config.Profiles.Remove(_config.CurrentProfile);
         _config.ActiveProfile = _config.Profiles[0].Name;
@@ -473,7 +473,7 @@ public sealed class MainForm : Form
 
     private void ResetPlayer(int playerIndex)
     {
-        if (MessageBox.Show(this, $"Belegung für P{playerIndex + 1} zurücksetzen?", "Zurücksetzen",
+        if (MessageBox.Show(this, $"Reset mappings for P{playerIndex + 1}?", "Reset mappings",
             MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
         _config.CurrentProfile.Players[playerIndex] = PlayerConfig.CreateDefault(playerIndex);
         Save();
@@ -510,16 +510,16 @@ public sealed class MainForm : Form
     private void UpdateStatus(BridgeStatus status)
     {
         _statusLabel.Text = status.Error is not null
-            ? "Fehler: " + status.Error
-            : status.Enabled ? "Bridge aktiv" : "Bridge gestoppt";
+            ? "Error: " + status.Error
+            : status.Enabled ? "Bridge active" : "Bridge stopped";
         _statusLabel.ForeColor = status.Error is not null ? Color.Firebrick : status.Enabled ? Color.DarkGreen : SystemColors.ControlText;
         _slotLabel.Text = status.Enabled
-            ? $"Echt: {status.PhysicalControllers} · Virtuell: {status.VirtualControllers} · Profil: {status.Profile}"
-            : "Keine virtuellen Controller verbunden";
-        _toggleButton.Text = status.Enabled ? "Bridge stoppen" : "Bridge starten";
+            ? $"Physical: {status.PhysicalControllers} · Virtual: {status.VirtualControllers} · Profile: {status.Profile}"
+            : "No virtual controllers connected";
+        _toggleButton.Text = status.Enabled ? "Stop bridge" : "Start bridge";
         _trayIcon.Text = status.Enabled
-            ? $"Keys2Pad: {status.PhysicalControllers} echt, {status.VirtualControllers} virtuell"
-            : "Keys2Pad: gestoppt";
+            ? $"Keys2Pad: {status.PhysicalControllers} physical, {status.VirtualControllers} virtual"
+            : "Keys2Pad: stopped";
     }
 
     public Task<string> ExecuteCommandAsync(string command)
@@ -534,7 +534,7 @@ public sealed class MainForm : Form
             }
             catch (Exception ex)
             {
-                completion.SetResult("Fehler: " + ex.Message);
+                completion.SetResult("Error: " + ex.Message);
             }
         }
 
@@ -546,33 +546,33 @@ public sealed class MainForm : Form
     {
         switch (command.ToLowerInvariant())
         {
-            case "start": _coordinator.Start(); return "OK: Bridge gestartet.";
-            case "stop": _coordinator.Stop(); return "OK: Bridge gestoppt.";
-            case "toggle": ToggleBridge(); return "OK: Bridge umgeschaltet.";
-            case "show": ShowWindow(); return "OK: Fenster geöffnet.";
-            case "hide": Hide(); return "OK: Fenster verborgen.";
+            case "start": _coordinator.Start(); return "OK: Bridge started.";
+            case "stop": _coordinator.Stop(); return "OK: Bridge stopped.";
+            case "toggle": ToggleBridge(); return "OK: Bridge toggled.";
+            case "show": ShowWindow(); return "OK: Window opened.";
+            case "hide": Hide(); return "OK: Window hidden.";
             case "status":
                 BridgeStatus s = _coordinator.Status;
-                return $"{(s.Enabled ? "aktiv" : "gestoppt")}; physisch={s.PhysicalControllers}; virtuell={s.VirtualControllers}; profil={s.Profile}";
+                return $"{(s.Enabled ? "active" : "stopped")}; physical={s.PhysicalControllers}; virtual={s.VirtualControllers}; profile={s.Profile}";
             case "exit":
                 BeginInvoke(ExitApplication);
-                return "OK: App wird beendet.";
+                return "OK: App is exiting.";
         }
 
         if (command.StartsWith("profile ", StringComparison.OrdinalIgnoreCase))
         {
             string requested = command[8..].Trim().Trim('"');
             ProfileConfig? profile = _config.Profiles.FirstOrDefault(p => p.Name.Equals(requested, StringComparison.OrdinalIgnoreCase));
-            if (profile is null) return $"Fehler: Profil „{requested}“ nicht gefunden.";
+            if (profile is null) return $"Error: Profile \"{requested}\" not found.";
             _config.ActiveProfile = profile.Name;
             Save();
             RefreshProfiles();
             BuildPlayerTabs();
             _coordinator.Rebuild();
-            return $"OK: Profil „{profile.Name}“ aktiv.";
+            return $"OK: Profile \"{profile.Name}\" active.";
         }
 
-        return "Fehler: unbekannter Befehl.";
+        return "Error: Unknown command.";
     }
 
     private void ShowWindow()

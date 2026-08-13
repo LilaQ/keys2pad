@@ -1,15 +1,15 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
-; BridgeExe anpassen oder EXE und Script in denselben Ordner legen.
+; Change BridgeExe or place the EXE and script in the same folder.
 BridgeExe := A_ScriptDir "\Keys2Pad.exe"
-ProfileName := "Standard"
+ProfileName := "Default"
 
 if !FileExist(BridgeExe) && FileExist(A_ScriptDir "\..\..\Keys2Pad.exe")
     BridgeExe := A_ScriptDir "\..\..\Keys2Pad.exe"
 
 if !FileExist(BridgeExe) {
-    MsgBox "Keys2Pad.exe nicht gefunden:`n" BridgeExe, "LaunchBox / Keys2Pad", 16
+    MsgBox "Keys2Pad.exe was not found:`n" BridgeExe, "LaunchBox / Keys2Pad", 16
     ExitApp 2
 }
 

@@ -24,7 +24,7 @@ internal static class Program
 
             if (command is "stop" or "exit" or "hide" or "status")
             {
-                WriteConsole("Keys2Pad läuft nicht.");
+                WriteConsole("Keys2Pad is not running.");
                 Environment.ExitCode = 2;
                 return;
             }
@@ -37,7 +37,7 @@ internal static class Program
                 return;
             }
 
-            WriteConsole("Keys2Pad konnte nicht gestartet werden.");
+            WriteConsole("Keys2Pad could not be started.");
             Environment.ExitCode = 4;
             return;
         }
@@ -45,7 +45,7 @@ internal static class Program
         using Mutex mutex = new(initiallyOwned: true, MutexName, out bool firstInstance);
         if (!firstInstance)
         {
-            WriteConsole("Keys2Pad läuft bereits.");
+            WriteConsole("Keys2Pad is already running.");
             return;
         }
 
@@ -131,17 +131,17 @@ internal static class Program
     {
         string executable = Path.GetFileName(Environment.ProcessPath) ?? "Keys2Pad.exe";
         WriteConsole($"""
-            {executable} [Option]
+            {executable} [option]
 
-              --start             Bridge aktivieren (startet die App bei Bedarf)
-              --stop              Bridge deaktivieren
-              --toggle            Bridge umschalten
-              --status            Status als Text ausgeben
-              --profile "Name"    Profil aktivieren
-              --show / --hide     Fenster zeigen/verbergen
-              --tray              neue Instanz im Tray starten
-              --exit              App vollständig beenden
-              --help              diese Hilfe
+              --start             Enable the bridge (starts the app if needed)
+              --stop              Disable the bridge
+              --toggle            Toggle the bridge
+              --status            Print status as text
+              --profile "Name"    Activate a profile
+              --show / --hide     Show or hide the window
+              --tray              Start a new instance in the tray
+              --exit              Exit the app completely
+              --help              Show this help
             """);
     }
 

@@ -4,7 +4,7 @@ namespace Keys2Pad.Models;
 
 public sealed class AppConfig
 {
-    public string ActiveProfile { get; set; } = "Standard";
+    public string ActiveProfile { get; set; } = "Default";
     public bool StartEnabled { get; set; } = true;
     public bool MinimizeToTray { get; set; } = true;
     public int PollIntervalMs { get; set; } = 8;
@@ -17,13 +17,13 @@ public sealed class AppConfig
 
     public static AppConfig CreateDefault() => new()
     {
-        Profiles = [ProfileConfig.CreateDefault("Standard")]
+        Profiles = [ProfileConfig.CreateDefault("Default")]
     };
 }
 
 public sealed class ProfileConfig
 {
-    public string Name { get; set; } = "Profil";
+    public string Name { get; set; } = "Profile";
     public List<PlayerConfig> Players { get; set; } = [];
 
     public static ProfileConfig CreateDefault(string name) => new()

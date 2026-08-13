@@ -6,7 +6,7 @@ public sealed class LegalForm : Form
 {
     public LegalForm()
     {
-        Text = "Rechtliches & Compliance";
+        Text = "Legal & Compliance";
         StartPosition = FormStartPosition.CenterParent;
         Size = new Size(720, 610);
         MinimumSize = new Size(560, 440);
@@ -20,32 +20,32 @@ public sealed class LegalForm : Form
             BorderStyle = BorderStyle.None,
             Padding = new Padding(12),
             Text = $"""
-                Keys2Pad — Rechtliches & Compliance
+                Keys2Pad — Legal & Compliance
                 Version {Application.ProductVersion}
 
-                Datenschutz und Datenverarbeitung
-                Die App arbeitet lokal. Sie liest den aktuellen Zustand der konfigurierten Tastaturtasten und die Windows-Geräteinformationen verbundener Controller. Konfigurationen werden unter %LOCALAPPDATA%\Keys2Pad gespeichert. Es gibt keine Konten, Cloud-Synchronisierung, Telemetrie, Werbung oder Netzwerkübertragung durch die App.
+                Privacy and data handling
+                The app works locally. It reads the current state of configured keyboard keys and Windows device information for connected controllers. Configurations are stored under %LOCALAPPDATA%\Keys2Pad. The app has no accounts, cloud sync, telemetry, or advertising, and it does not send data over the network.
 
-                Berechtigungen
-                Die App benötigt keine Administratorrechte. Optional schreibt sie einen Autostart-Eintrag für den aktuellen Benutzer. Der separat zu installierende ViGEmBus-Treiber ist ein Kernel-Treiber und benötigt bei seiner Installation Administratorrechte.
+                Permissions
+                The app does not require administrator privileges. It can optionally create a startup entry for the current user. The separately installed ViGEmBus driver is a kernel driver and requires administrator privileges during installation.
 
-                Nutzung / Gewährleistung
-                Diese Entwicklungsfassung wird ohne Gewähr bereitgestellt. Herausgeberidentität, Nutzungsbedingungen bzw. EULA und eine gesonderte Supportadresse müssen noch durch den Eigentümer festgelegt werden.
+                Terms and warranty
+                This prerelease is provided without warranty. Publisher identity, terms or EULA, and a separate support address still require decisions from the owner.
 
-                Drittanbieter
-                Nefarius.ViGEm.Client 1.21.256 (MIT) und ViGEmBus (BSD-3-Clause). ViGEmBus wurde vom Hersteller eingestellt. Projekt und Binär-Releases:
+                Third-party software
+                Nefarius.ViGEm.Client 1.21.256 (MIT) and ViGEmBus (BSD-3-Clause). ViGEmBus has been discontinued by its manufacturer. Project and binary releases:
                 https://github.com/nefarius/ViGEmBus
 
-                Microsoft .NET 8 Runtime — MIT und weitere Hinweise:
+                Microsoft .NET 8 Runtime — MIT and additional notices:
                 https://github.com/dotnet/runtime
 
-                Datenschutz und Support
-                https://github.com/LilaQ/keys2pad/blob/main/docs/PRIVACY.de.md
+                Privacy and support
+                https://github.com/LilaQ/keys2pad/blob/main/docs/PRIVACY.md
                 https://github.com/LilaQ/keys2pad/issues
-                Lokale Dokumentation liegt dem Paket zusätzlich im Ordner docs bei.
+                Local documentation is also included in the package under docs.
 
-                Sicherheit und Einschränkungen
-                XInput vergibt P1–P4 automatisch. Bei Änderungen echter Controller trennt die App virtuelle Geräte kurz und meldet sie danach erneut an. Laufende Spiele erkennen diese Änderung je nach Implementierung unterschiedlich.
+                Safety and limitations
+                Windows assigns XInput slots P1–P4 automatically. When physical controllers change, the app briefly disconnects its virtual devices and reconnects the required ones. Running games handle this change differently depending on their implementation.
                 """
         };
         text.LinkClicked += (_, e) =>
@@ -56,7 +56,7 @@ public sealed class LegalForm : Form
             }
         };
 
-        Button close = new() { Text = "Schließen", Dock = DockStyle.Bottom, Height = 38, DialogResult = DialogResult.OK };
+        Button close = new() { Text = "Close", Dock = DockStyle.Bottom, Height = 38, DialogResult = DialogResult.OK };
         Controls.Add(text);
         Controls.Add(close);
         AcceptButton = close;

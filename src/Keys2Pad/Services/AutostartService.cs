@@ -20,7 +20,7 @@ public static class AutostartService
         if (enabled)
         {
             string executable = Environment.ProcessPath
-                ?? throw new InvalidOperationException("Programmpfad konnte nicht ermittelt werden.");
+                ?? throw new InvalidOperationException("The application path could not be determined.");
             key.SetValue(ValueName, $"\"{executable}\" --tray --start", RegistryValueKind.String);
             foreach (string legacyValueName in LegacyValueNames)
             {

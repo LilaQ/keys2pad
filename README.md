@@ -4,8 +4,8 @@
 
 Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encoders such as the I-PAC. Map any key to up to four virtual Xbox 360 controllers. If real Xbox controllers are connected, they automatically take the first player slots and Keys2Pad fills the rest.
 
-[![Download](https://img.shields.io/github/v/release/LilaQ/keys2pad?include_prereleases&label=Download&style=for-the-badge)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
-[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-2674d9?style=for-the-badge&logo=windows)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0)
+[![Download](https://img.shields.io/github/v/release/LilaQ/keys2pad?include_prereleases&label=Download&style=for-the-badge)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1)
+[![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-2674d9?style=for-the-badge&logo=windows)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1)
 [![Buy me a beer](https://img.shields.io/badge/Buy_me_a_beer-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=000)](https://buymeacoffee.com/lilaq)
 
 ![Keys2Pad controller mapping](docs/assets/keys2pad-ui.png)
@@ -17,15 +17,15 @@ Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encode
 - create profiles and switch them from the GUI, command line or LaunchBox;
 - run quietly in the tray and optionally start with Windows;
 - use the included AutoHotkey v1 and v2 scripts directly in LaunchBox;
-- no accounts, telemetry, ads or app network traffic.
+- no accounts, telemetry, ads, or outbound network communication.
 
 Example: with two real controllers connected, they become P1 and P2. Keys2Pad creates virtual P3 and P4. Windows ultimately assigns XInput indices, so games without hot-plug support should be started after the controllers are ready.
 
 ## Install
 
 1. Install the official signed [ViGEmBus 1.22.0 release](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0). The archived driver is required and is not installed silently by Keys2Pad.
-2. Download and unpack the current [Keys2Pad prerelease](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.0).
-3. Start `Keys2Pad.exe`, click a controller control and press the keyboard key you want.
+2. Download and unpack the current [Keys2Pad prerelease](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1).
+3. Start `Keys2Pad.exe`, select a controller input, and press the keyboard key you want.
 4. Check the result with `Win+R` → `joy.cpl`.
 
 ## Command line
@@ -35,7 +35,7 @@ Keys2Pad.exe --start
 Keys2Pad.exe --stop
 Keys2Pad.exe --toggle
 Keys2Pad.exe --status
-Keys2Pad.exe --profile "Standard"
+Keys2Pad.exe --profile "Default"
 Keys2Pad.exe --show
 Keys2Pad.exe --hide
 Keys2Pad.exe --tray

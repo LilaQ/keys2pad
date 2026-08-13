@@ -29,8 +29,8 @@ public sealed class ControllerDiagram : Control
         Height = 410;
         MinimumSize = new Size(520, 260);
         BackColor = Color.FromArgb(9, 12, 16);
-        AccessibleName = "Interaktive Controller-Übersicht";
-        AccessibleDescription = "Controllerbereich anklicken, um eine Keyboard-Taste zuzuweisen. Rechtsklick löscht die Zuordnung.";
+        AccessibleName = "Interactive controller overview";
+        AccessibleDescription = "Click a controller input to assign a keyboard key. Right-click to clear the binding.";
     }
 
     public event EventHandler<VirtualInputEventArgs>? BindingRequested;
@@ -56,7 +56,7 @@ public sealed class ControllerDiagram : Control
         {
             RegionInfo region = Find(hovered);
             _toolTip.SetToolTip(this,
-                $"{region.ActionLabel}: {BindingTextProvider?.Invoke(region.Input) ?? "nicht belegt"}\nLinksklick: zuweisen · Rechtsklick: löschen");
+                $"{region.ActionLabel}: {BindingTextProvider?.Invoke(region.Input) ?? "not assigned"}\nLeft-click: assign · Right-click: clear");
         }
         else
         {
@@ -101,7 +101,7 @@ public sealed class ControllerDiagram : Control
         Cursor = hovered.HasValue ? Cursors.Hand : Cursors.Default;
         string hint = region is null
             ? string.Empty
-            : $"{region.ActionLabel}: {BindingTextProvider?.Invoke(region.Input) ?? "nicht belegt"}\nLinksklick: zuweisen · Rechtsklick: löschen";
+            : $"{region.ActionLabel}: {BindingTextProvider?.Invoke(region.Input) ?? "not assigned"}\nLeft-click: assign · Right-click: clear";
         _toolTip.SetToolTip(this, hint);
         Invalidate();
     }
@@ -293,7 +293,7 @@ public sealed class ControllerDiagram : Control
         using Font font = new("Segoe UI", 12f, FontStyle.Bold);
         using SolidBrush brush = new(Color.FromArgb(135, 149, 164));
         using StringFormat format = new() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-        graphics.DrawString("25 EINZELN BELEGBARE XINPUT-AKTIONEN", font, brush, new RectangleF(250, 636, 500, 20), format);
+        graphics.DrawString("25 INDIVIDUALLY MAPPABLE XINPUT ACTIONS", font, brush, new RectangleF(250, 636, 500, 20), format);
     }
 
     private void DrawRegion(Graphics graphics, RegionInfo region, Color normalFill, bool outline, string? label = null, float labelSize = 12f)
@@ -349,31 +349,31 @@ public sealed class ControllerDiagram : Control
 
     private static RegionInfo[] CreateRegions() =>
     [
-        new(VirtualInput.LeftTrigger, "Linker Trigger (LT)", LeftTriggerPath()),
-        new(VirtualInput.LeftShoulder, "Linke Schultertaste (LB)", LeftBumperPath()),
-        new(VirtualInput.RightTrigger, "Rechter Trigger (RT)", RightTriggerPath()),
-        new(VirtualInput.RightShoulder, "Rechte Schultertaste (RB)", RightBumperPath()),
+        new(VirtualInput.LeftTrigger, "Left trigger (LT)", LeftTriggerPath()),
+        new(VirtualInput.LeftShoulder, "Left bumper (LB)", LeftBumperPath()),
+        new(VirtualInput.RightTrigger, "Right trigger (RT)", RightTriggerPath()),
+        new(VirtualInput.RightShoulder, "Right bumper (RB)", RightBumperPath()),
         new(VirtualInput.Guide, "Guide", EllipsePath(498, 132, 38)),
         new(VirtualInput.Back, "Back / View", EllipsePath(436, 227, 21)),
         new(VirtualInput.Start, "Start / Menu", EllipsePath(559, 227, 21)),
-        new(VirtualInput.LeftStickUp, "Linker Stick hoch", StickSectorPath(283, 231, 270)),
-        new(VirtualInput.LeftStickRight, "Linker Stick rechts", StickSectorPath(283, 231, 0)),
-        new(VirtualInput.LeftStickDown, "Linker Stick runter", StickSectorPath(283, 231, 90)),
-        new(VirtualInput.LeftStickLeft, "Linker Stick links", StickSectorPath(283, 231, 180)),
-        new(VirtualInput.RightStickUp, "Rechter Stick hoch", StickSectorPath(608, 354, 270)),
-        new(VirtualInput.RightStickRight, "Rechter Stick rechts", StickSectorPath(608, 354, 0)),
-        new(VirtualInput.RightStickDown, "Rechter Stick runter", StickSectorPath(608, 354, 90)),
-        new(VirtualInput.RightStickLeft, "Rechter Stick links", StickSectorPath(608, 354, 180)),
-        new(VirtualInput.DPadUp, "Steuerkreuz hoch", DPadUpPath()),
-        new(VirtualInput.DPadRight, "Steuerkreuz rechts", DPadRightPath()),
-        new(VirtualInput.DPadDown, "Steuerkreuz runter", DPadDownPath()),
-        new(VirtualInput.DPadLeft, "Steuerkreuz links", DPadLeftPath()),
-        new(VirtualInput.Y, "Y-Taste", EllipsePath(711, 170, 31)),
-        new(VirtualInput.X, "X-Taste", EllipsePath(647, 227, 31)),
-        new(VirtualInput.B, "B-Taste", EllipsePath(769, 227, 31)),
-        new(VirtualInput.A, "A-Taste", EllipsePath(712, 283, 31)),
-        new(VirtualInput.LeftThumb, "Linken Stick drücken (L3)", EllipsePath(283, 231, 34)),
-        new(VirtualInput.RightThumb, "Rechten Stick drücken (R3)", EllipsePath(608, 354, 34))
+        new(VirtualInput.LeftStickUp, "Left stick up", StickSectorPath(283, 231, 270)),
+        new(VirtualInput.LeftStickRight, "Left stick right", StickSectorPath(283, 231, 0)),
+        new(VirtualInput.LeftStickDown, "Left stick down", StickSectorPath(283, 231, 90)),
+        new(VirtualInput.LeftStickLeft, "Left stick left", StickSectorPath(283, 231, 180)),
+        new(VirtualInput.RightStickUp, "Right stick up", StickSectorPath(608, 354, 270)),
+        new(VirtualInput.RightStickRight, "Right stick right", StickSectorPath(608, 354, 0)),
+        new(VirtualInput.RightStickDown, "Right stick down", StickSectorPath(608, 354, 90)),
+        new(VirtualInput.RightStickLeft, "Right stick left", StickSectorPath(608, 354, 180)),
+        new(VirtualInput.DPadUp, "D-pad up", DPadUpPath()),
+        new(VirtualInput.DPadRight, "D-pad right", DPadRightPath()),
+        new(VirtualInput.DPadDown, "D-pad down", DPadDownPath()),
+        new(VirtualInput.DPadLeft, "D-pad left", DPadLeftPath()),
+        new(VirtualInput.Y, "Y button", EllipsePath(711, 170, 31)),
+        new(VirtualInput.X, "X button", EllipsePath(647, 227, 31)),
+        new(VirtualInput.B, "B button", EllipsePath(769, 227, 31)),
+        new(VirtualInput.A, "A button", EllipsePath(712, 283, 31)),
+        new(VirtualInput.LeftThumb, "Left stick click (L3)", EllipsePath(283, 231, 34)),
+        new(VirtualInput.RightThumb, "Right stick click (R3)", EllipsePath(608, 354, 34))
     ];
 
     private static GraphicsPath LeftTriggerPath() => Path(path =>
