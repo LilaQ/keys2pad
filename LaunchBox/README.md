@@ -8,3 +8,5 @@ This folder includes separate start/stop scripts and a combined `While-Game` scr
 4. Add `Keys2Pad-Start.ahk` as the startup script and `Keys2Pad-Stop.ahk` as the shutdown script. Alternatively, use `Keys2Pad-While-Game.ahk` as the emulator's running script.
 
 Important: some LaunchBox or emulator setups terminate running AHK processes forcefully. In that case, the separate shutdown script is more reliable than `OnExit` in the combined script.
+
+For a supplied profile JSON, run `Start-Profile.ps1 -ProfileFile "path\to\profile.json"`. It backs up and merges that profile into the user configuration, waits for each CLI process separately, and writes `launch.log` beside Keys2Pad. It does not install ViGEmBus. Stop the bridge with `Keys2Pad.exe --stop` when the game exits.
