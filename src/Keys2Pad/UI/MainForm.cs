@@ -565,6 +565,8 @@ public sealed class MainForm : Form
             string requested = command[8..].Trim().Trim('"');
             ProfileConfig? profile = _config.Profiles.FirstOrDefault(p => p.Name.Equals(requested, StringComparison.OrdinalIgnoreCase));
             if (profile is null) return $"Error: Profile \"{requested}\" not found.";
+            if (_config.ActiveProfile.Equals(profile.Name, StringComparison.OrdinalIgnoreCase))
+                return $"OK: Profile \"{profile.Name}\" already active.";
             _config.ActiveProfile = profile.Name;
             Save();
             RefreshProfiles();

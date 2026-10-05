@@ -96,10 +96,11 @@ internal static class Program
         for (int attempt = 0; attempt < 40; attempt++)
         {
             Thread.Sleep(100);
-            string? response = CommandServer.TrySendAsync(command, timeoutMs: 150).GetAwaiter().GetResult();
+            string? response = CommandServer.TrySendAsync("status", timeoutMs: 150).GetAwaiter().GetResult();
             if (response is not null)
             {
-                return response;
+                // Readiness probes must not replay a mutating command after a timeout.
+                return CommandServer.TrySendAsync(command, timeoutMs: 5000).GetAwaiter().GetResult();
             }
         }
 

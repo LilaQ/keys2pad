@@ -6,7 +6,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>Keys2Pad</AssemblyName>
     <RootNamespace>Keys2Pad</RootNamespace>
-    <Version>0.4.2</Version>
+    <Version>0.4.3</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PublishSingleFile>true</PublishSingleFile>
@@ -15,6 +15,7 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Keys2Pad.Tests" />
     <PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
   </ItemGroup>
 </Project>

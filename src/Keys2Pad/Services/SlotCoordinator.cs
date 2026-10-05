@@ -80,6 +80,7 @@ public sealed class SlotCoordinator : IDisposable
                     int count = _physicalCounter.CountPhysicalXInputControllers();
                     if (count != _physicalCount)
                     {
+                        RuntimeLog.Write($"Controller scan: physical={count}; previous={_physicalCount}");
                         _physicalCount = count;
                         _virtualControllers?.DisconnectAll();
 
@@ -87,6 +88,7 @@ public sealed class SlotCoordinator : IDisposable
                         // let already connected hardware claim the lowest free indices.
                         await Task.Delay(650, token).ConfigureAwait(false);
                         int stableCount = _physicalCounter.CountPhysicalXInputControllers();
+                        RuntimeLog.Write($"Controller scan after disconnect: physical={stableCount}");
                         _physicalCount = stableCount;
                         _virtualControllers ??= new VirtualControllerService();
                         _virtualControllers.Connect(4 - stableCount);

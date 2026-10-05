@@ -73,7 +73,7 @@ public sealed class PhysicalControllerMonitor : IPhysicalControllerCounter
         for (int depth = 0; depth < 12; depth++)
         {
             string id = GetDeviceId(current);
-            if (id.Contains("VIGEM", StringComparison.OrdinalIgnoreCase))
+            if (IsViGEmNode(id, GetDeviceService(current)))
             {
                 return true;
             }
@@ -88,6 +88,24 @@ public sealed class PhysicalControllerMonitor : IPhysicalControllerCounter
 
         return false;
     }
+
+    internal static bool IsViGEmNode(string instanceId, string service) =>
+        instanceId.Contains("VIGEM", StringComparison.OrdinalIgnoreCase)
+        || service.Equals("ViGEmBus", StringComparison.OrdinalIgnoreCase);
+
+    private static string GetDeviceService(uint devInst)
+    {
+        byte[] buffer = new byte[512];
+        uint length = (uint)buffer.Length;
+        return CM_Get_DevNode_Registry_Property(devInst, 5 /* CM_DRP_SERVICE */,
+            out _, buffer, ref length, 0) == 0
+            ? Encoding.Unicode.GetString(buffer, 0, (int)length).TrimEnd('\0')
+            : string.Empty;
+    }
+
+    [DllImport("cfgmgr32.dll", CharSet = CharSet.Unicode, EntryPoint = "CM_Get_DevNode_Registry_PropertyW")]
+    private static extern uint CM_Get_DevNode_Registry_Property(uint devInst, uint property,
+        out uint regType, byte[] buffer, ref uint length, uint flags);
 
     private static string GetDeviceId(uint devInst)
     {
