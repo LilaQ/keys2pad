@@ -15,6 +15,7 @@ internal static class Program
         string? command = ParseCommand(args);
         if (command is not null)
         {
+            RuntimeLog.Write($"CLI command: {command}");
             string? response = CommandServer.TrySendAsync(command).GetAwaiter().GetResult();
             if (response is not null)
             {
@@ -49,9 +50,13 @@ internal static class Program
             return;
         }
 
+        RuntimeLog.StartSession();
+        AppDomain.CurrentDomain.UnhandledException += (_, e) => RuntimeLog.Write($"Unhandled exception: {e.ExceptionObject}");
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
         ApplicationConfiguration.Initialize();
         ConfigStore store = new();
         AppConfig config = store.Load();
+        RuntimeLog.Write($"Config loaded: {store.FilePath}; profile={config.ActiveProfile}; startEnabled={config.StartEnabled}; players={config.CurrentProfile.Players.Count}");
         using SlotCoordinator coordinator = new(new PhysicalControllerMonitor(), new KeyboardInput(), () => config);
         using MainForm form = new(config, store, coordinator);
         using CommandServer server = new(cmd => form.ExecuteCommandAsync(cmd));
@@ -67,7 +72,8 @@ internal static class Program
             form.BeginHidden = true;
         }
 
-        Application.Run(form);
+        try { Application.Run(form); }
+        finally { coordinator.Stop(); RuntimeLog.Write("Session stopped."); }
     }
 
     private static string? StartBackgroundAndSend(string command)
@@ -147,6 +153,7 @@ internal static class Program
 
     private static void WriteConsole(string text)
     {
+        RuntimeLog.Write($"CLI response: {text}");
         try
         {
             if (!AttachConsole(AttachParentProcess))

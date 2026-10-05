@@ -29,7 +29,9 @@ public sealed class CommandServer : IDisposable
                 using StreamReader reader = new(pipe, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true);
                 await using StreamWriter writer = new(pipe, new UTF8Encoding(false), leaveOpen: true) { AutoFlush = true };
                 string command = await reader.ReadLineAsync(token).ConfigureAwait(false) ?? string.Empty;
+                RuntimeLog.Write($"Received command: {command}");
                 string result = await _handler(command).ConfigureAwait(false);
+                RuntimeLog.Write($"Command result: {result}");
                 await writer.WriteLineAsync(result).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested)

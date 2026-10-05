@@ -36,6 +36,7 @@ public sealed class SlotCoordinator : IDisposable
                 return;
             }
 
+            RuntimeLog.Write("Bridge start requested.");
             _enabled = true;
             _physicalCount = -1;
             _cts = new CancellationTokenSource();
@@ -48,6 +49,7 @@ public sealed class SlotCoordinator : IDisposable
         Task? loop;
         lock (_sync)
         {
+            RuntimeLog.Write("Bridge stop requested.");
             _enabled = false;
             _cts?.Cancel();
             loop = _loop;
@@ -105,6 +107,7 @@ public sealed class SlotCoordinator : IDisposable
         }
         catch (Exception ex)
         {
+            RuntimeLog.Write($"Bridge failure: {ex}");
             try { _virtualControllers?.Dispose(); } catch { }
             _virtualControllers = null;
             Publish(new BridgeStatus(false, Math.Max(0, _physicalCount), 0, _getConfig().ActiveProfile, ex.Message));
@@ -119,6 +122,7 @@ public sealed class SlotCoordinator : IDisposable
             return;
         }
 
+        RuntimeLog.Write($"Bridge status: enabled={status.Enabled}; physical={status.PhysicalControllers}; virtual={status.VirtualControllers}; profile={status.Profile}; error={status.Error ?? "none"}");
         Status = status;
         StatusChanged?.Invoke(this, status);
     }

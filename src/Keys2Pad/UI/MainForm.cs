@@ -553,7 +553,8 @@ public sealed class MainForm : Form
             case "hide": Hide(); return "OK: Window hidden.";
             case "status":
                 BridgeStatus s = _coordinator.Status;
-                return $"{(s.Enabled ? "active" : "stopped")}; physical={s.PhysicalControllers}; virtual={s.VirtualControllers}; profile={s.Profile}";
+                return $"{(s.Enabled ? "active" : "stopped")}; physical={s.PhysicalControllers}; virtual={s.VirtualControllers}; profile={s.Profile}"
+                    + (s.Error is null ? string.Empty : $"; error={s.Error}");
             case "exit":
                 BeginInvoke(ExitApplication);
                 return "OK: App is exiting.";

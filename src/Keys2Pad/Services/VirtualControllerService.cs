@@ -12,7 +12,9 @@ public sealed class VirtualControllerService : IDisposable
 
     public VirtualControllerService()
     {
+        RuntimeLog.Write("Opening ViGEm client.");
         _client = new ViGEmClient();
+        RuntimeLog.Write("ViGEm client connected.");
     }
 
     public int Count => _controllers.Count;
@@ -26,6 +28,7 @@ public sealed class VirtualControllerService : IDisposable
             controller.AutoSubmitReport = false;
             controller.Connect();
             _controllers.Add(controller);
+            RuntimeLog.Write($"Virtual controller connected: {_controllers.Count} of {count}.");
         }
     }
 

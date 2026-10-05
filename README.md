@@ -59,3 +59,7 @@ On Windows with the .NET 8 SDK:
 - The current release is unsigned and marked as a prerelease.
 
 Support and bug reports: [GitHub Issues](https://github.com/LilaQ/keys2pad/issues)
+
+## Troubleshooting
+
+`Keys2Pad.log` is written beside the executable and replaced whenever a new app session starts. If that folder is not writable, it is written under `%LOCALAPPDATA%\Keys2Pad`. It records startup, commands, controller counts and errors, but never key presses. CLI helpers append to the running session rather than clearing its log.

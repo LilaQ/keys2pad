@@ -60,8 +60,9 @@ public sealed class ConfigStore
 
             return config;
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
+            RuntimeLog.Write($"Invalid config JSON: {ex.Message}");
             string backup = FilePath + ".broken-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
             File.Move(FilePath, backup, overwrite: true);
             return AppConfig.CreateDefault();
