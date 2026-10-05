@@ -10,6 +10,15 @@ function Write-LaunchLog([string]$message) {
 Write-LaunchLog ('Launch started; cwd=' + (Get-Location).Path)
 try {
 $bridge = Join-Path $toolDirectory 'Keys2Pad.exe'
+$pendingUpdate = Join-Path $toolDirectory 'Keys2Pad.new.exe'
+if (Test-Path $pendingUpdate) {
+    Write-LaunchLog 'Applying staged bridge update.'
+    $exitProcess = Start-Process -FilePath $bridge -ArgumentList '--exit' -PassThru
+    $exitProcess.WaitForExit()
+    Get-Process -Name Keys2Pad -ErrorAction SilentlyContinue | Wait-Process -Timeout 10 -ErrorAction Stop
+    Copy-Item $bridge ($bridge + '.backup-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+    Move-Item $pendingUpdate $bridge -Force
+}
 $profile = Get-Content $ProfileFile -Raw | ConvertFrom-Json
 if ([string]::IsNullOrWhiteSpace($profile.Name)) { throw 'Profile has no name.' }
 $directory = Join-Path $env:LOCALAPPDATA 'Keys2Pad'
