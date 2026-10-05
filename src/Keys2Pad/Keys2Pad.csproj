@@ -6,7 +6,7 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <AssemblyName>Keys2Pad</AssemblyName>
     <RootNamespace>Keys2Pad</RootNamespace>
-    <Version>0.4.3</Version>
+    <Version>0.4.4</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PublishSingleFile>true</PublishSingleFile>

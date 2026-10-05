@@ -542,6 +542,8 @@ public sealed class MainForm : Form
         return completion.Task;
     }
 
+    private GameProcessLifetime? _gameLifetime;
+
     private string ExecuteCommand(string command)
     {
         switch (command.ToLowerInvariant())
@@ -558,6 +560,19 @@ public sealed class MainForm : Form
             case "exit":
                 BeginInvoke(ExitApplication);
                 return "OK: App is exiting.";
+        }
+
+        if (command.StartsWith("watch ", StringComparison.OrdinalIgnoreCase))
+        {
+            string name = command[6..].Trim().Trim('"');
+            if (string.IsNullOrWhiteSpace(name) || name.IndexOfAny(['\\', '/']) >= 0)
+                return "Error: Supply an executable name without a path.";
+            _gameLifetime?.Dispose();
+            _gameLifetime = new GameProcessLifetime(name, () =>
+            {
+                if (!IsDisposed) BeginInvoke(ExitApplication);
+            });
+            return $"OK: Watching {name}.";
         }
 
         if (command.StartsWith("profile ", StringComparison.OrdinalIgnoreCase))
@@ -608,6 +623,7 @@ public sealed class MainForm : Form
         if (disposing)
         {
             _coordinator.StatusChanged -= CoordinatorOnStatusChanged;
+            _gameLifetime?.Dispose();
             _trayIcon.Dispose();
         }
         base.Dispose(disposing);

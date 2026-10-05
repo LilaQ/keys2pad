@@ -121,6 +121,7 @@ internal static class Program
                 case "--show": return "show";
                 case "--hide": return "hide";
                 case "--exit": return "exit";
+                case "--watch-process" when i + 1 < args.Length: return "watch " + args[i + 1];
                 case "--profile" when i + 1 < args.Length: return "profile " + args[i + 1];
                 case "--help":
                 case "-h":
@@ -147,6 +148,7 @@ internal static class Program
               --profile "Name"    Activate a profile
               --show / --hide     Show or hide the window
               --tray              Start a new instance in the tray
+              --watch-process EXE Exit when the game process ends (60s startup limit)
               --exit              Exit the app completely
               --help              Show this help
             """);

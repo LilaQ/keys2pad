@@ -14,6 +14,7 @@ ProfileConfig copy = config.CurrentProfile.Clone("Copy");
 copy.Players[0].Bindings[VirtualInput.A] = (int)Keys.K;
 Assert(config.CurrentProfile.Players[0].Bindings[VirtualInput.A] != copy.Players[0].Bindings[VirtualInput.A], "Deep clone");
 
+GameProcessLifetimeTests.Run();
 RuntimeLogTests.Run();
 DeviceFilterTests.Run();
 Console.WriteLine("All model and logging self-tests passed.");

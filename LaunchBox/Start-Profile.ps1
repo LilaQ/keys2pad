@@ -1,4 +1,4 @@
-param([Parameter(Mandatory = $true)][string]$ProfileFile)
+param([Parameter(Mandatory = $true)][string]$ProfileFile, [string]$WatchProcess)
 
 $ErrorActionPreference = 'Stop'
 $toolDirectory = Split-Path -Parent $PSScriptRoot
@@ -59,6 +59,12 @@ Start-Sleep -Milliseconds 1000
 $command = Start-Process -FilePath $bridge -ArgumentList '--status' -PassThru
 $command.WaitForExit()
 Write-LaunchLog ('Status command exit=' + $command.ExitCode + '; see Keys2Pad.log for response.')
+if ($WatchProcess) {
+    $command = Start-Process -FilePath $bridge -ArgumentList ('--watch-process "' + $WatchProcess + '"') -PassThru
+    $command.WaitForExit()
+    if ($command.ExitCode -ne 0) { throw 'Game process watch failed.' }
+    Write-LaunchLog ('Watching game process ' + $WatchProcess)
+}
 Write-LaunchLog 'Launch setup completed.'
 } catch {
     Write-LaunchLog ('FAILED: ' + $_.Exception.ToString() + '; ' + $_.ScriptStackTrace)
