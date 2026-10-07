@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-Last updated: August 13, 2026
+Last updated: October 7, 2026
 
 ## Nefarius.ViGEm.Client 1.21.256
 
@@ -27,3 +27,11 @@ The complete license text is included at `docs/licenses/ViGEmBus-BSD-3-Clause.tx
 - License: MIT; self-contained releases include additional third-party notices from the runtime package
 
 Packaging must retain the license and notice files produced by `dotnet publish` or supplied by its packages.
+
+## Microsoft GameInput 3.5.283
+
+- Package: https://www.nuget.org/packages/Microsoft.GameInput/3.5.283
+- Documentation/source: https://github.com/microsoftconnect/GameInput
+- Runtime: Microsoft GameInput Redistributable, under the included Microsoft Software License Terms.
+- The package includes the unmodified Microsoft `GameInputRedist.msi` installer. Installation is explicit and may require administrator privileges.
+- License and third-party notices: `docs/licenses/Microsoft.GameInput.txt` and `docs/licenses/Microsoft.GameInput-NOTICE.txt`.

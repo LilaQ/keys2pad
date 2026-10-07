@@ -2,13 +2,13 @@
 
 **Turn keyboard keys into Xbox controllers on Windows.**
 
-Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encoders such as the I-PAC. Map any key to up to four virtual Xbox 360 controllers. If real Xbox controllers are connected, they automatically take the first player slots and Keys2Pad fills the rest.
+Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encoders such as the I-PAC. Map any key to up to four virtual Xbox 360 controllers. Real gamepads take priority over cabinet keys in their assigned player slots, including when connected during a game.
 
 [![Download](https://img.shields.io/github/v/release/LilaQ/keys2pad?include_prereleases&label=Download&style=for-the-badge)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-2674d9?style=for-the-badge&logo=windows)](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1)
 [![Buy me a beer](https://img.shields.io/badge/Buy_me_a_beer-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=000)](https://buymeacoffee.com/lilaq)
 
-![Keys2Pad controller mapping](docs/assets/keys2pad-ui.png)
+The window shows the live input source for every player P1–P4, alongside a controller diagram and all key bindings.
 
 ## Why it is useful
 
@@ -19,12 +19,14 @@ Keys2Pad is made for arcade cabinets, button boxes, regular keyboards and encode
 - use the included AutoHotkey v1 and v2 scripts directly in LaunchBox;
 - no accounts, telemetry, ads, or outbound network communication.
 
-Example: with two real controllers connected, they become P1 and P2. Keys2Pad creates virtual P3 and P4. Windows ultimately assigns XInput indices, so games without hot-plug support should be started after the controllers are ready.
+Keys2Pad preserves physical XInput slots already assigned at startup and fills empty slots with virtual controllers. Later gamepads are read through Microsoft GameInput, including in the background, and forwarded to the lowest available virtual player slots. Cabinet keys pause for those players. Disconnecting a forwarded gamepad restores the cabinet keys; the virtual controller remains connected to the game. Profile changes and rescans also preserve these virtual devices.
+
+When an initially native gamepad disconnects, its now-empty slot needs a replacement virtual device. Games must support that first device change. Connecting and disconnecting gamepads thereafter uses the persistent virtual device. Other controller emulators can occupy XInput slots; the UI reports Windows' actual assigned slots. Forwarded physical gamepads currently provide buttons, sticks and triggers; vibration and the Guide system button are not forwarded.
 
 ## Install
 
 1. Install the official signed [ViGEmBus 1.22.0 release](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0). The archived driver is required and is not installed silently by Keys2Pad.
-2. Download and unpack the current [Keys2Pad prerelease](https://github.com/LilaQ/keys2pad/releases/tag/v0.4.1).
+2. Unpack the supplied Keys2Pad package and install its signed Microsoft `GameInputRedist.msi` once if GameInput is missing or outdated. This is a Windows runtime installation, separate from Keys2Pad; the app does not install it silently.
 3. Start `Keys2Pad.exe`, select a controller input, and press the keyboard key you want.
 4. Check the result with `Win+R` → `joy.cpl`.
 
@@ -39,6 +41,7 @@ Keys2Pad.exe --profile "Default"
 Keys2Pad.exe --show
 Keys2Pad.exe --hide
 Keys2Pad.exe --tray
+Keys2Pad.exe --watch-process "game.exe"
 Keys2Pad.exe --exit
 ```
 
@@ -54,7 +57,9 @@ On Windows with the .NET 8 SDK:
 
 ## Notes
 
-- Keyboard input is digital: sticks and triggers output 0 or 100 percent.
+- Keyboard input is digital: sticks and triggers output 0 or 100 percent. Physical gamepads retain their analog values.
+- `--tray` and LaunchBox command starts create no visible app window; `--show` opens it explicitly.
+- `--start` waits for usable player slots and returns a failure exit code if initialization fails.
 - ViGEmBus is archived and no longer maintained.
 - The current release is unsigned and marked as a prerelease.
 

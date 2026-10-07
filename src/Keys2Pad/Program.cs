@@ -16,10 +16,11 @@ internal static class Program
         if (command is not null)
         {
             RuntimeLog.Write($"CLI command: {command}");
-            string? response = CommandServer.TrySendAsync(command).GetAwaiter().GetResult();
+            string? response = CommandServer.TrySendAsync(command, responseTimeoutMs: 12000).GetAwaiter().GetResult();
             if (response is not null)
             {
                 WriteConsole(response);
+                if (response.StartsWith("Error:", StringComparison.OrdinalIgnoreCase)) Environment.ExitCode = 1;
                 return;
             }
 
@@ -35,6 +36,7 @@ internal static class Program
             if (response is not null)
             {
                 WriteConsole(response);
+                if (response.StartsWith("Error:", StringComparison.OrdinalIgnoreCase)) Environment.ExitCode = 1;
                 return;
             }
 
@@ -57,20 +59,14 @@ internal static class Program
         ConfigStore store = new();
         AppConfig config = store.Load();
         RuntimeLog.Write($"Config loaded: {store.FilePath}; profile={config.ActiveProfile}; startEnabled={config.StartEnabled}; players={config.CurrentProfile.Players.Count}");
-        using SlotCoordinator coordinator = new(new PhysicalControllerMonitor(), new KeyboardInput(), () => config);
-        using MainForm form = new(config, store, coordinator);
+        AppConfig runtimeConfig = config.RuntimeSnapshot();
+        using SlotCoordinator coordinator = new(new KeyboardInput(), () => Volatile.Read(ref runtimeConfig));
+        using MainForm form = new(config, store, coordinator, snapshot => Volatile.Write(ref runtimeConfig, snapshot));
+        form.BeginHidden = args.Any(a => a.Equals("--tray", StringComparison.OrdinalIgnoreCase));
+        // Create the dispatch handle on the STA thread before accepting pipe commands.
+        _ = form.Handle;
         using CommandServer server = new(cmd => form.ExecuteCommandAsync(cmd));
-
-        if (config.StartEnabled)
-        {
-            coordinator.Start();
-        }
-
-        bool tray = args.Any(a => a.Equals("--tray", StringComparison.OrdinalIgnoreCase));
-        if (tray)
-        {
-            form.BeginHidden = true;
-        }
+        if (config.StartEnabled) coordinator.Start();
 
         try { Application.Run(form); }
         finally { coordinator.Stop(); RuntimeLog.Write("Session stopped."); }
@@ -100,7 +96,7 @@ internal static class Program
             if (response is not null)
             {
                 // Readiness probes must not replay a mutating command after a timeout.
-                return CommandServer.TrySendAsync(command, timeoutMs: 5000).GetAwaiter().GetResult();
+                return CommandServer.TrySendAsync(command, responseTimeoutMs: 12000).GetAwaiter().GetResult();
             }
         }
 

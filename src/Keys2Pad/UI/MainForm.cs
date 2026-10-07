@@ -36,8 +36,10 @@ public sealed class MainForm : Form
     private readonly AppConfig _config;
     private readonly ConfigStore _store;
     private readonly SlotCoordinator _coordinator;
+    private readonly Action<AppConfig>? _publishConfig;
     private readonly Label _statusLabel = new();
     private readonly Label _slotLabel = new();
+    private readonly Label[] _playerStatus = Enumerable.Range(0, 4).Select(_ => new Label()).ToArray();
     private readonly Button _toggleButton = new();
     private readonly ComboBox _profiles = new();
     private readonly TabControl _playerTabs = new();
@@ -52,16 +54,20 @@ public sealed class MainForm : Form
     private bool _reallyClose;
     private bool _updatingAutostart;
 
-    public MainForm(AppConfig config, ConfigStore store, SlotCoordinator coordinator)
+    public MainForm(AppConfig config, ConfigStore store, SlotCoordinator coordinator, Action<AppConfig>? publishConfig = null)
     {
         _config = config;
         _store = store;
         _coordinator = coordinator;
+        _publishConfig = publishConfig;
 
         Text = "Keys2Pad";
         StartPosition = FormStartPosition.CenterScreen;
-        MinimumSize = new Size(860, 720);
-        Size = new Size(1040, 920);
+        AutoScaleMode = AutoScaleMode.Dpi;
+        Font = new Font("Segoe UI", 10f);
+        MinimumSize = new Size(1100, 700);
+        ClientSize = new Size(1240, 760);
+        WindowState = FormWindowState.Maximized;
         KeyPreview = true;
 
         MainMenuStrip = BuildMenu();
@@ -102,13 +108,16 @@ public sealed class MainForm : Form
 
     public bool BeginHidden { get; set; }
 
-    protected override void OnShown(EventArgs e)
+    // Suppress the first visible transition itself; hiding in OnShown is too late.
+    protected override void SetVisibleCore(bool value)
     {
-        base.OnShown(e);
-        if (BeginHidden)
+        if (value && BeginHidden)
         {
-            Hide();
+            BeginHidden = false;
+            value = false;
+            if (!IsHandleCreated) CreateHandle();
         }
+        base.SetVisibleCore(value);
     }
 
     private MenuStrip BuildMenu()
@@ -137,10 +146,11 @@ public sealed class MainForm : Form
         TableLayoutPanel root = new()
         {
             Dock = DockStyle.Fill,
-            Padding = new Padding(12, 38, 12, 12),
+            Padding = new Padding(16, 30, 16, 12),
             ColumnCount = 1,
-            RowCount = 4
+            RowCount = 5
         };
+        root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
@@ -174,10 +184,27 @@ public sealed class MainForm : Form
         profileBar.Controls.Add(MakeButton("New", (_, _) => NewProfile()));
         profileBar.Controls.Add(MakeButton("Duplicate", (_, _) => DuplicateProfile()));
         profileBar.Controls.Add(MakeButton("Delete", (_, _) => DeleteProfile()));
-        root.Controls.Add(profileBar, 0, 1);
+        TableLayoutPanel players = new() { Dock = DockStyle.Top, Height = 76, ColumnCount = 4, Margin = new Padding(0, 10, 0, 4) };
+        for (int i = 0; i < 4; i++)
+        {
+            players.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            Label card = _playerStatus[i];
+            card.Dock = DockStyle.Fill;
+            card.Padding = new Padding(12, 8, 8, 4);
+            card.Margin = new Padding(i == 0 ? 0 : 4, 0, 0, 0);
+            card.Font = new Font(Font, FontStyle.Bold);
+            card.AutoEllipsis = true;
+            card.AccessibleName = $"Player {i + 1} input source";
+            int playerIndex = i;
+            card.Cursor = Cursors.Hand;
+            card.Click += (_, _) => _playerTabs.SelectedIndex = playerIndex;
+            players.Controls.Add(card, i, 0);
+        }
+        root.Controls.Add(players, 0, 1);
+        root.Controls.Add(profileBar, 0, 2);
 
         _playerTabs.Dock = DockStyle.Fill;
-        root.Controls.Add(_playerTabs, 0, 2);
+        root.Controls.Add(_playerTabs, 0, 3);
 
         GroupBox settings = new() { Text = "Behavior", Dock = DockStyle.Bottom, AutoSize = true, Padding = new Padding(10) };
         FlowLayoutPanel settingsFlow = new() { Dock = DockStyle.Fill, AutoSize = true };
@@ -189,6 +216,7 @@ public sealed class MainForm : Form
         _autostart.CheckedChanged += (_, _) => SetAutostart();
         _minimizeToTray.Text = "Close/minimize to tray";
         _minimizeToTray.AutoSize = true;
+        _minimizeToTray.CheckedChanged += (_, _) => { _config.MinimizeToTray = _minimizeToTray.Checked; Save(); };
         _pollInterval.Minimum = 4;
         _pollInterval.Maximum = 50;
         _pollInterval.Width = 55;
@@ -199,12 +227,13 @@ public sealed class MainForm : Form
         settingsFlow.Controls.Add(new Label { Text = "Polling (ms):", AutoSize = true, Margin = new Padding(16, 7, 2, 0) });
         settingsFlow.Controls.Add(_pollInterval);
         settings.Controls.Add(settingsFlow);
-        root.Controls.Add(settings, 0, 3);
+        root.Controls.Add(settings, 0, 4);
         return root;
     }
 
     private void BuildPlayerTabs()
     {
+        int selectedPlayer = Math.Max(0, _playerTabs.SelectedIndex);
         _capture = null;
         _mappingButtons.Clear();
         _controllerDiagrams.Clear();
@@ -224,17 +253,19 @@ public sealed class MainForm : Form
             TableLayoutPanel pageLayout = new()
             {
                 Dock = DockStyle.Fill,
-                ColumnCount = 1,
-                RowCount = 2,
-                Padding = new Padding(6)
+                ColumnCount = 2,
+                RowCount = 1,
+                Padding = new Padding(8)
             };
-            pageLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 55));
-            pageLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
+            pageLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 44));
+            pageLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 56));
+            pageLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
             ControllerDiagram diagram = new()
             {
                 Dock = DockStyle.Fill,
-                Margin = new Padding(0, 0, 0, 6),
+                MinimumSize = new Size(360, 240),
+                Margin = new Padding(0, 0, 12, 0),
                 BindingTextProvider = input => KeyName(player, input)
             };
             diagram.BindingRequested += (_, e) =>
@@ -255,37 +286,34 @@ public sealed class MainForm : Form
             _controllerDiagrams[capturedPlayer] = diagram;
             pageLayout.Controls.Add(diagram, 0, 0);
 
-            TableLayoutPanel table = new()
+            TableLayoutPanel mapping = new() { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4 };
+            mapping.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            mapping.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            mapping.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            mapping.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            CheckBox enabled = new() { Text = $"Enable cabinet keys for P{playerIndex + 1}", Checked = player.Enabled, AutoSize = true };
+            enabled.CheckedChanged += (_, _) => { player.Enabled = enabled.Checked; Save(); _coordinator.Rebuild(); };
+            mapping.Controls.Add(enabled, 0, 0);
+            mapping.Controls.Add(new Label
             {
-                Dock = DockStyle.Fill,
-                AutoScroll = true,
-                ColumnCount = 2,
-                Padding = new Padding(12)
-            };
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55));
-            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45));
-
-            CheckBox enabled = new() { Text = $"Enable virtual controller P{playerIndex + 1}", Checked = player.Enabled, AutoSize = true };
-            enabled.CheckedChanged += (_, _) => { player.Enabled = enabled.Checked; Save(); };
-            table.Controls.Add(enabled, 0, 0);
-            table.SetColumnSpan(enabled, 2);
-
-            Label instructions = new()
-            {
-                Text = "Left-click: assign a key · Right-click: clear binding",
+                Text = "Click: assign key · Right-click: clear · Gamepads take priority",
                 AutoSize = true,
-                ForeColor = SystemColors.GrayText,
-                Margin = new Padding(3, 3, 3, 10)
-            };
-            table.Controls.Add(instructions, 0, 1);
-            table.SetColumnSpan(instructions, 2);
+                Margin = new Padding(3, 4, 3, 10)
+            }, 0, 1);
 
-            int row = 2;
-            foreach ((VirtualInput input, string label) in Inputs)
+            TableLayoutPanel table = new() { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 13 };
+            for (int column = 0; column < 4; column++)
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25));
+            for (int row = 0; row < 13; row++)
+                table.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / 13));
+            for (int index = 0; index < Inputs.Length; index++)
             {
-                table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                table.Controls.Add(new Label { Text = label, AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(3, 8, 3, 3) }, 0, row);
-                Button button = new() { Dock = DockStyle.Top, Height = 28, Tag = input, Text = KeyName(player, input) };
+                (VirtualInput input, string label) = Inputs[index];
+                int column = index / 13 * 2;
+                int row = index % 13;
+                table.Controls.Add(new Label { Text = label, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleLeft }, column, row);
+                Button button = new() { Dock = DockStyle.Fill, Tag = input, Text = KeyName(player, input), Margin = new Padding(2), FlatStyle = FlatStyle.System };
+                button.AccessibleName = $"P{playerIndex + 1} {label} key binding";
                 button.Click += (_, _) =>
                 {
                     diagram.SelectedInput = input;
@@ -300,22 +328,19 @@ public sealed class MainForm : Form
                     }
                 };
                 _mappingButtons[(capturedPlayer, input)] = button;
-                table.Controls.Add(button, 1, row++);
+                table.Controls.Add(button, column + 1, row);
             }
-
-            FlowLayoutPanel actions = new() { AutoSize = true, Margin = new Padding(0, 9, 0, 6) };
-            Button clear = new() { Text = "Clear all bindings", AutoSize = true };
-            clear.Click += (_, _) => ClearPlayer(capturedPlayer);
-            Button reset = new() { Text = "Restore defaults", AutoSize = true };
-            reset.Click += (_, _) => ResetPlayer(capturedPlayer);
-            actions.Controls.Add(clear);
-            actions.Controls.Add(reset);
-            table.Controls.Add(actions, 0, row);
-            table.SetColumnSpan(actions, 2);
-            pageLayout.Controls.Add(table, 0, 1);
+            mapping.Controls.Add(table, 0, 2);
+            FlowLayoutPanel actions = new() { AutoSize = true, Dock = DockStyle.Fill, Margin = new Padding(0, 8, 0, 0) };
+            actions.Controls.Add(MakeButton("Clear all bindings", (_, _) => ClearPlayer(capturedPlayer)));
+            actions.Controls.Add(MakeButton("Restore defaults", (_, _) => ResetPlayer(capturedPlayer)));
+            mapping.Controls.Add(actions, 0, 3);
+            pageLayout.Controls.Add(mapping, 1, 0);
             page.Controls.Add(pageLayout);
             _playerTabs.TabPages.Add(page);
         }
+        _playerTabs.SelectedIndex = selectedPlayer;
+        UpdateStatus(_coordinator.Status);
     }
 
     private static Button MakeButton(string text, EventHandler click)
@@ -360,7 +385,7 @@ public sealed class MainForm : Form
     }
 
     private static string KeyName(PlayerConfig player, VirtualInput input) =>
-        player.Bindings.TryGetValue(input, out int key) ? ((Keys)key).ToString() : "— not assigned —";
+        player.Bindings.TryGetValue(input, out int key) ? ((Keys)key).ToString() : "Unassigned";
 
     private void ClearBinding(int playerIndex, VirtualInput input, Button button)
     {
@@ -504,7 +529,13 @@ public sealed class MainForm : Form
     private void CoordinatorOnStatusChanged(object? sender, BridgeStatus status)
     {
         if (IsDisposed) return;
-        if (InvokeRequired) BeginInvoke(() => UpdateStatus(status)); else UpdateStatus(status);
+        if (!IsHandleCreated) return;
+        if (InvokeRequired)
+        {
+            try { BeginInvoke(() => { if (!IsDisposed) UpdateStatus(status); }); }
+            catch (InvalidOperationException) when (IsDisposed || Disposing) { }
+        }
+        else UpdateStatus(status);
     }
 
     private void UpdateStatus(BridgeStatus status)
@@ -516,6 +547,15 @@ public sealed class MainForm : Form
         _slotLabel.Text = status.Enabled
             ? $"Physical: {status.PhysicalControllers} · Virtual: {status.VirtualControllers} · Profile: {status.Profile}"
             : "No virtual controllers connected";
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerSlotStatus slot = status.Slots[i];
+            _playerStatus[i].Text = $"P{i + 1}  {slot.Source}\n{slot.Detail}";
+            _playerStatus[i].BackColor = slot.Source == "Gamepad" ? Color.FromArgb(219, 239, 226)
+                : slot.Source == "Cab keys" ? Color.FromArgb(225, 235, 250) : SystemColors.ControlLight;
+            _playerStatus[i].ForeColor = Color.FromArgb(25, 33, 44);
+            if (_playerTabs.TabPages.Count > i) _playerTabs.TabPages[i].Text = $"P{i + 1} · {slot.Source}";
+        }
         _toggleButton.Text = status.Enabled ? "Stop bridge" : "Start bridge";
         _trayIcon.Text = status.Enabled
             ? $"Keys2Pad: {status.PhysicalControllers} physical, {status.VirtualControllers} virtual"
@@ -525,11 +565,18 @@ public sealed class MainForm : Form
     public Task<string> ExecuteCommandAsync(string command)
     {
         TaskCompletionSource<string> completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        void Execute()
+        async void Execute()
         {
             try
             {
-                string result = ExecuteCommand(command.Trim());
+                string result;
+                if (command.Trim().Equals("start", StringComparison.OrdinalIgnoreCase))
+                {
+                    _coordinator.Start();
+                    string? error = await _coordinator.WhenReady.WaitAsync(TimeSpan.FromSeconds(10));
+                    result = error is null ? "OK: Bridge started; player slots ready." : "Error: " + error;
+                }
+                else result = ExecuteCommand(command.Trim());
                 completion.SetResult(result);
             }
             catch (Exception ex)
@@ -556,6 +603,7 @@ public sealed class MainForm : Form
             case "status":
                 BridgeStatus s = _coordinator.Status;
                 return $"{(s.Enabled ? "active" : "stopped")}; physical={s.PhysicalControllers}; virtual={s.VirtualControllers}; profile={s.Profile}"
+                    + "; " + string.Join("; ", s.Slots.Select((slot, i) => $"P{i + 1}={slot.Source} ({slot.Detail})"))
                     + (s.Error is null ? string.Empty : $"; error={s.Error}");
             case "exit":
                 BeginInvoke(ExitApplication);
@@ -596,7 +644,7 @@ public sealed class MainForm : Form
     private void ShowWindow()
     {
         Show();
-        WindowState = FormWindowState.Normal;
+        if (WindowState == FormWindowState.Minimized) WindowState = FormWindowState.Maximized;
         Activate();
     }
 
@@ -616,7 +664,11 @@ public sealed class MainForm : Form
         Close();
     }
 
-    private void Save() => _store.Save(_config);
+    private void Save()
+    {
+        _store.Save(_config);
+        _publishConfig?.Invoke(_config.RuntimeSnapshot());
+    }
 
     protected override void Dispose(bool disposing)
     {

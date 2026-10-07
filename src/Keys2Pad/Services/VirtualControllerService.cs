@@ -5,7 +5,16 @@ using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 namespace Keys2Pad.Services;
 
-public sealed class VirtualControllerService : IDisposable
+public interface IVirtualControllerService : IDisposable
+{
+    int Count { get; }
+    int PendingCount { get; }
+    IReadOnlyList<int> Slots { get; }
+    void ConnectOne();
+    void Apply(IReadOnlyList<SlotRoute> routes, IReadOnlyList<PlayerConfig> players, IKeyboardInput keyboard);
+}
+
+public sealed class VirtualControllerService : IVirtualControllerService
 {
     private readonly ViGEmClient _client;
     private readonly List<IXbox360Controller> _controllers = [];
@@ -19,82 +28,80 @@ public sealed class VirtualControllerService : IDisposable
 
     public int Count => _controllers.Count;
 
-    public void Connect(int count)
+    public IReadOnlyList<int> Slots => _controllers.Select(Index).Where(i => i >= 0).ToArray();
+    public int PendingCount => _controllers.Count(c => Index(c) < 0);
+
+    private static int Index(IXbox360Controller controller)
     {
-        DisconnectAll();
-        for (int i = 0; i < Math.Clamp(count, 0, 4); i++)
+        try { return controller.UserIndex is >= 0 and < 4 ? controller.UserIndex : -1; }
+        catch (Nefarius.ViGEm.Client.Targets.Xbox360.Exceptions.Xbox360UserIndexNotReportedException) { return -1; }
+    }
+
+    public void ConnectOne()
+    {
+        IXbox360Controller controller = _client.CreateXbox360Controller();
+        controller.AutoSubmitReport = false;
+        try { controller.Connect(); }
+        catch
         {
-            IXbox360Controller controller = _client.CreateXbox360Controller();
-            controller.AutoSubmitReport = false;
-            controller.Connect();
-            _controllers.Add(controller);
-            RuntimeLog.Write($"Virtual controller connected: {_controllers.Count} of {count}.");
+            try { controller.Disconnect(); } catch { }
+            throw;
         }
+        _controllers.Add(controller);
+        controller.ResetReport();
+        controller.SubmitReport();
+        RuntimeLog.Write($"Virtual controller connected: {_controllers.Count}.");
     }
 
     public void DisconnectAll()
     {
+        Exception? failure = null;
         foreach (IXbox360Controller controller in _controllers)
         {
-            controller.Disconnect();
+            try { controller.ResetReport(); controller.SubmitReport(); }
+            catch (Exception ex) { failure ??= ex; }
+            try { controller.Disconnect(); }
+            catch (Exception ex) { failure ??= ex; }
         }
-
         _controllers.Clear();
+        if (failure is not null) throw new InvalidOperationException("Could not release every virtual controller cleanly.", failure);
     }
 
-    public void Apply(IReadOnlyList<PlayerConfig> virtualPlayers, IKeyboardInput keyboard)
+    public void Apply(IReadOnlyList<SlotRoute> routes, IReadOnlyList<PlayerConfig> players, IKeyboardInput keyboard)
     {
-        int count = Math.Min(_controllers.Count, virtualPlayers.Count);
-        for (int i = 0; i < count; i++)
+        foreach (IXbox360Controller controller in _controllers)
         {
-            Apply(_controllers[i], virtualPlayers[i], keyboard);
+            int slot = Index(controller);
+            SlotRoute? route = routes.FirstOrDefault(r => r.Index == slot && !r.Direct);
+            if (route?.Gamepad is { } pad) ApplyGamepad(controller, pad.State);
+            else if (route is not null) Apply(controller, players[slot], keyboard);
+            else
+            {
+                controller.ResetReport();
+                controller.SubmitReport();
+            }
         }
     }
 
-    private static void Apply(IXbox360Controller controller, PlayerConfig player, IKeyboardInput keyboard)
+    internal static void ApplyGamepad(IXbox360Controller controller, GamepadState state) => Submit(controller, ControllerReport.FromGamepad(state));
+    internal static void Apply(IXbox360Controller controller, PlayerConfig player, IKeyboardInput keyboard) => Submit(controller, ControllerReport.FromKeyboard(player, keyboard));
+
+    private static void Submit(IXbox360Controller controller, ControllerReport report)
     {
-        bool Pressed(VirtualInput input) => player.Enabled
-            && player.Bindings.TryGetValue(input, out int key)
-            && keyboard.IsPressed(key);
-
-        short Axis(VirtualInput negative, VirtualInput positive)
-        {
-            bool n = Pressed(negative);
-            bool p = Pressed(positive);
-            return n == p ? (short)0 : n ? short.MinValue : short.MaxValue;
-        }
-
-        controller.SetAxisValue(Xbox360Axis.LeftThumbX, Axis(VirtualInput.LeftStickLeft, VirtualInput.LeftStickRight));
-        controller.SetAxisValue(Xbox360Axis.LeftThumbY, Axis(VirtualInput.LeftStickDown, VirtualInput.LeftStickUp));
-        controller.SetAxisValue(Xbox360Axis.RightThumbX, Axis(VirtualInput.RightStickLeft, VirtualInput.RightStickRight));
-        controller.SetAxisValue(Xbox360Axis.RightThumbY, Axis(VirtualInput.RightStickDown, VirtualInput.RightStickUp));
-        controller.SetSliderValue(Xbox360Slider.LeftTrigger, Pressed(VirtualInput.LeftTrigger) ? byte.MaxValue : byte.MinValue);
-        controller.SetSliderValue(Xbox360Slider.RightTrigger, Pressed(VirtualInput.RightTrigger) ? byte.MaxValue : byte.MinValue);
-
-        Set(controller, Xbox360Button.Up, Pressed(VirtualInput.DPadUp));
-        Set(controller, Xbox360Button.Down, Pressed(VirtualInput.DPadDown));
-        Set(controller, Xbox360Button.Left, Pressed(VirtualInput.DPadLeft));
-        Set(controller, Xbox360Button.Right, Pressed(VirtualInput.DPadRight));
-        Set(controller, Xbox360Button.A, Pressed(VirtualInput.A));
-        Set(controller, Xbox360Button.B, Pressed(VirtualInput.B));
-        Set(controller, Xbox360Button.X, Pressed(VirtualInput.X));
-        Set(controller, Xbox360Button.Y, Pressed(VirtualInput.Y));
-        Set(controller, Xbox360Button.LeftShoulder, Pressed(VirtualInput.LeftShoulder));
-        Set(controller, Xbox360Button.RightShoulder, Pressed(VirtualInput.RightShoulder));
-        Set(controller, Xbox360Button.Back, Pressed(VirtualInput.Back));
-        Set(controller, Xbox360Button.Start, Pressed(VirtualInput.Start));
-        Set(controller, Xbox360Button.Guide, Pressed(VirtualInput.Guide));
-        Set(controller, Xbox360Button.LeftThumb, Pressed(VirtualInput.LeftThumb));
-        Set(controller, Xbox360Button.RightThumb, Pressed(VirtualInput.RightThumb));
+        controller.ResetReport();
+        controller.SetButtonsFull(report.Buttons);
+        controller.SetAxisValue(Xbox360Axis.LeftThumbX, report.LeftX);
+        controller.SetAxisValue(Xbox360Axis.LeftThumbY, report.LeftY);
+        controller.SetAxisValue(Xbox360Axis.RightThumbX, report.RightX);
+        controller.SetAxisValue(Xbox360Axis.RightThumbY, report.RightY);
+        controller.SetSliderValue(Xbox360Slider.LeftTrigger, report.LeftTrigger);
+        controller.SetSliderValue(Xbox360Slider.RightTrigger, report.RightTrigger);
         controller.SubmitReport();
     }
 
-    private static void Set(IXbox360Controller controller, Xbox360Button button, bool pressed) =>
-        controller.SetButtonState(button, pressed);
-
     public void Dispose()
     {
-        DisconnectAll();
-        _client.Dispose();
+        try { DisconnectAll(); }
+        finally { _client.Dispose(); }
     }
 }

@@ -15,9 +15,14 @@ copy.Players[0].Bindings[VirtualInput.A] = (int)Keys.K;
 Assert(config.CurrentProfile.Players[0].Bindings[VirtualInput.A] != copy.Players[0].Bindings[VirtualInput.A], "Deep clone");
 
 GameProcessLifetimeTests.Run();
+AppConfig snapshot = config.RuntimeSnapshot();
+config.CurrentProfile.Players[0].Bindings[VirtualInput.A] = 123;
+Assert(snapshot.CurrentProfile.Players[0].Bindings[VirtualInput.A] != 123, "Runtime snapshot is independent of UI bindings");
 RuntimeLogTests.Run();
 DeviceFilterTests.Run();
-Console.WriteLine("All model and logging self-tests passed.");
+HotSwapTests.Run();
+CoordinatorTests.Run();
+Console.WriteLine("All model, logging, device, lifetime and HotSwap self-tests passed.");
 
 static void Assert(bool condition, string name)
 {

@@ -45,7 +45,7 @@ public sealed class CommandServer : IDisposable
         }
     }
 
-    public static async Task<string?> TrySendAsync(string command, int timeoutMs = 1500)
+    public static async Task<string?> TrySendAsync(string command, int timeoutMs = 1500, int? responseTimeoutMs = null)
     {
         try
         {
@@ -56,7 +56,8 @@ public sealed class CommandServer : IDisposable
             await using StreamWriter writer = new(pipe, new UTF8Encoding(false), leaveOpen: true) { AutoFlush = true };
             using StreamReader reader = new(pipe, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, leaveOpen: true);
             await writer.WriteLineAsync(command).ConfigureAwait(false);
-            return await reader.ReadLineAsync(timeout.Token).ConfigureAwait(false);
+            using CancellationTokenSource responseTimeout = new(responseTimeoutMs ?? timeoutMs);
+            return await reader.ReadLineAsync(responseTimeout.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

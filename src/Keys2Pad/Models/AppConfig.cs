@@ -15,6 +15,17 @@ public sealed class AppConfig
         Profiles.FirstOrDefault(p => p.Name.Equals(ActiveProfile, StringComparison.OrdinalIgnoreCase))
         ?? Profiles.First();
 
+    // The polling thread reads a published snapshot; UI edits never mutate its
+    // binding dictionaries or player list while a report is being built.
+    public AppConfig RuntimeSnapshot() => new()
+    {
+        ActiveProfile = ActiveProfile,
+        StartEnabled = StartEnabled,
+        MinimizeToTray = MinimizeToTray,
+        PollIntervalMs = PollIntervalMs,
+        Profiles = [CurrentProfile.Clone(ActiveProfile)]
+    };
+
     public static AppConfig CreateDefault() => new()
     {
         Profiles = [ProfileConfig.CreateDefault("Default")]
