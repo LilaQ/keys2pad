@@ -21,7 +21,7 @@ public sealed class SlotRouter
             _directIds.RemoveRange(directSlots.Count, _directIds.Count - directSlots.Count);
         if (!_initialized || _directIds.Count < directSlots.Count)
         {
-            foreach (PhysicalGamepad pad in physical.Where(p => !_directIds.Contains(p.Id)))
+            foreach (PhysicalGamepad pad in physical.Where(p => p.NativeXInputEligible && !_directIds.Contains(p.Id)))
             {
                 if (_directIds.Count >= directSlots.Count) break;
                 _directIds.Add(pad.Id);

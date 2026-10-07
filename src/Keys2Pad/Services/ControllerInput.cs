@@ -10,7 +10,7 @@ public struct GamepadState
     public float LeftTrigger, RightTrigger, LeftX, LeftY, RightX, RightY;
 }
 
-public sealed record PhysicalGamepad(string Id, string Name, GamepadState State, bool ReadingAvailable = true);
+public sealed record PhysicalGamepad(string Id, string Name, GamepadState State, bool ReadingAvailable = true, bool NativeXInputEligible = true);
 
 public interface IPhysicalControllerSource : IDisposable
 {

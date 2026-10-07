@@ -10,8 +10,10 @@ $project = Join-Path $root "src/Keys2Pad/Keys2Pad.csproj"
 $output = Join-Path $root "artifacts/Keys2Pad-$Runtime"
 
 dotnet restore $project -r $Runtime
+if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed" }
 dotnet publish $project -c $Configuration -r $Runtime --self-contained true `
     -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o $output
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed" }
 
 Copy-Item (Join-Path $root "LaunchBox") $output -Recurse -Force
 $docsOutput = Join-Path $output "docs"
@@ -21,15 +23,16 @@ foreach ($document in @("PRIVACY.md", "THIRD-PARTY-NOTICES.md", "licenses")) {
 }
 $assets = Get-Content (Join-Path $root "src/Keys2Pad/obj/project.assets.json") -Raw | ConvertFrom-Json
 $licensesOutput = Join-Path $docsOutput "licenses"
-foreach ($library in $assets.libraries.PSObject.Properties) {
-    if ($library.Name -like "Microsoft.NETCore.App.Runtime.$Runtime/*" -or
-        $library.Name -like "Microsoft.WindowsDesktop.App.Runtime.$Runtime/*") {
+foreach ($framework in $assets.project.frameworks.PSObject.Properties.Value) {
+    foreach ($package in $framework.downloadDependencies) {
+        if ($package.name -notin @("Microsoft.NETCore.App.Runtime.$Runtime", "Microsoft.WindowsDesktop.App.Runtime.$Runtime")) { continue }
+        $version = $package.version.Trim('[', ']').Split(',')[0].Trim()
         foreach ($folder in $assets.packageFolders.PSObject.Properties.Name) {
-            $packageDirectory = Join-Path $folder $library.Value.path
+            $packageDirectory = Join-Path (Join-Path $folder $package.name.ToLowerInvariant()) $version
             foreach ($notice in @("LICENSE", "LICENSE.TXT", "THIRD-PARTY-NOTICES.TXT")) {
                 $sourceNotice = Join-Path $packageDirectory $notice
                 if (Test-Path $sourceNotice) {
-                    $noticeName = $library.Name.Split('/')[0] + '-' + $notice + '.txt'
+                    $noticeName = $package.name + '-' + $notice + '.txt'
                     Copy-Item $sourceNotice (Join-Path $licensesOutput $noticeName) -Force
                 }
             }

@@ -38,6 +38,12 @@ internal static class HotSwapTests
         routes = native.Route([second, first with { Id = "first:2" }], [], allSlots);
         Check(routes[1].Gamepad?.Id == "first:2", "Returning original pad does not remain classified as direct");
 
+        PhysicalGamepad hidPad = new("hid:1", "HID gamepad", default, NativeXInputEligible: false);
+        SlotRouter mixed = new();
+        routes = mixed.Route([hidPad, first], [0], [1, 2, 3]);
+        Check(routes[0].Direct && routes[1].Gamepad == hidPad && routes.Count(r => r.Gamepad == first) == 0,
+            "Preconnected HID pad does not consume a native Xbox identity or duplicate the Xbox into P2");
+
         string hid = @"\\?\HID#VID_045E&PID_028E&IG_00#7&123&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}";
         Check(PhysicalControllerMonitor.DeviceInstanceIdFromPath(hid) == @"HID\VID_045E&PID_028E&IG_00\7&123&0&0000", "PnP interface path normalization");
         Check(PhysicalControllerMonitor.DeviceInstanceIdFromPath(@"USB\VID_045E&PID_028E\123") == @"USB\VID_045E&PID_028E\123", "PnP instance IDs preserved");

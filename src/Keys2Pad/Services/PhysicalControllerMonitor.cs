@@ -6,7 +6,9 @@ namespace Keys2Pad.Services;
 /// <summary>Classifies actual device ancestry, including wireless/GIP devices.</summary>
 public static class PhysicalControllerMonitor
 {
-    internal static bool IsViGEmDevicePath(string path)
+    internal static bool IsViGEmDevicePath(string path) => ClassifyDevicePath(path).Virtual;
+
+    internal static (bool Virtual, bool NativeXInput, bool Bluetooth) ClassifyDevicePath(string path)
     {
         string id = DeviceInstanceIdFromPath(path);
         if (string.IsNullOrWhiteSpace(id))
@@ -14,10 +16,16 @@ public static class PhysicalControllerMonitor
         // Phantom nodes are usable while a device is arriving or being removed.
         if (CM_Locate_DevNode(out uint node, id, 1) != 0)
             throw new InvalidOperationException("Cannot identify the controller's device tree: " + id);
+        bool nativeXInput = false, bluetooth = false;
         for (int depth = 0; depth < 32; depth++)
         {
-            if (IsViGEmNode(GetDeviceId(node), GetDeviceService(node))) return true;
-            if (CM_Get_Parent(out uint parent, node, 0) != 0) return false;
+            string instanceId = GetDeviceId(node), service = GetDeviceService(node);
+            if (IsViGEmNode(instanceId, service)) return (true, false, false);
+            nativeXInput |= service.StartsWith("xusb", StringComparison.OrdinalIgnoreCase)
+                || service.StartsWith("xboxgip", StringComparison.OrdinalIgnoreCase)
+                || instanceId.Contains("&IG_", StringComparison.OrdinalIgnoreCase);
+            bluetooth |= instanceId.StartsWith("BTH", StringComparison.OrdinalIgnoreCase);
+            if (CM_Get_Parent(out uint parent, node, 0) != 0) return (false, nativeXInput, bluetooth);
             node = parent;
         }
         throw new InvalidOperationException("Controller device ancestry exceeds the supported depth.");

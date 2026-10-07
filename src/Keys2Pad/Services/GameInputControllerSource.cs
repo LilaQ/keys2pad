@@ -21,7 +21,7 @@ public sealed class GameInputControllerSource : IPhysicalControllerSource
     private string? _error;
     private bool _disposed;
 
-    private sealed class Device(IntPtr handle, string id, string name, Guid container, string path)
+    private sealed class Device(IntPtr handle, string id, string name, Guid container, string path, int family, ushort vendor)
     {
         public IntPtr Handle { get; } = handle;
         public string Id { get; } = id;
@@ -30,6 +30,9 @@ public sealed class GameInputControllerSource : IPhysicalControllerSource
         public string Path { get; } = path;
         public DateTime FirstSeen { get; } = DateTime.UtcNow;
         public bool? Virtual { get; set; }
+        public int Family { get; } = family;
+        public ushort Vendor { get; } = vendor;
+        public bool NativeXInputEligible { get; set; }
     }
 
     public GameInputControllerSource()
@@ -94,7 +97,7 @@ public sealed class GameInputControllerSource : IPhysicalControllerSource
                 string path = Marshal.PtrToStringUTF8(info.PnpPath) ?? string.Empty;
                 string name = Marshal.PtrToStringUTF8(info.DisplayName) ?? "Gamepad";
                 Marshal.AddRef(handle);
-                _devices.Add(handle, new Device(handle, $"{Convert.ToHexString(info.DeviceId)}:{++_connection}", name, info.Container, path));
+                _devices.Add(handle, new Device(handle, $"{Convert.ToHexString(info.DeviceId)}:{++_connection}", name, info.Container, path, info.Family, info.Vendor));
             }
         }
         catch (Exception ex)
@@ -120,7 +123,10 @@ public sealed class GameInputControllerSource : IPhysicalControllerSource
                 {
                     try
                     {
-                        device.Virtual = PhysicalControllerMonitor.IsViGEmDevicePath(device.Path);
+                        var classification = PhysicalControllerMonitor.ClassifyDevicePath(device.Path);
+                        device.Virtual = classification.Virtual;
+                        device.NativeXInputEligible = device.Family is 1 or 2 || classification.NativeXInput
+                            || (device.Vendor == 0x045E && classification.Bluetooth);
                         if (!device.Virtual.Value) RuntimeLog.Write($"Physical gamepad connected: {device.Name}.");
                     }
                     catch (InvalidOperationException) when (DateTime.UtcNow - device.FirstSeen < TimeSpan.FromSeconds(2))
@@ -140,7 +146,7 @@ public sealed class GameInputControllerSource : IPhysicalControllerSource
                     try { available = Method<ReadGamepad>(reading, 18)(reading, out state); }
                     finally { Marshal.Release(reading); }
                 }
-                result.Add(new PhysicalGamepad(device.Id, device.Name, available ? state : default, available));
+                result.Add(new PhysicalGamepad(device.Id, device.Name, available ? state : default, available, device.NativeXInputEligible));
             }
             return result;
         }
